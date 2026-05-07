@@ -105,6 +105,15 @@ builder.Services.AddScoped<UrlLocator>();
 var app = builder.Build();
 #region app configure region
 
+if (app.Environment.IsProduction())
+{
+    app.UseExceptionHandler("/error");
+}
+else
+{
+    app.UseDeveloperExceptionPage();
+}
+
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseRouting();

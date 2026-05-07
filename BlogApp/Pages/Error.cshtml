@@ -1,13 +1,18 @@
-﻿@page "{id:int?}"
-@model BlogApp.Pages.ErrorModel
-@{
-    ViewBag.Title = "Error";
-    Layout = "_HomeLayout";
+﻿@page "/error"
+@{ 
+    Layout = null; 
 }
-<div class="container p-2">
-    <div class="row">
-        <h1 class="col-12 bg-danger text-black text-center">
-            Http error (@(Model.Id == 0 ? string.Empty : Model.Id)) has been accured. (@(Model.ErrorMessage?.ToString() ?? string.Empty))
-        </h1>      
-    </div>
-</div>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<title>Error</title>
+</head>
+<body class="text-center">
+<h2 class="text-danger">Error</h2>
+<h3 class="text-danger">An error occurred while processing your request</h3>
+</body>
+</html>

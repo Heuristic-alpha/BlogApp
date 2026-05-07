@@ -1,0 +1,57 @@
+﻿@page "/auth/login"
+@layout AuthLayout
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
+
+<div class="m-2 border border-5 border-dark">
+    <h1 class="m-2 bg-dark text-info text-center">Login</h1>
+    <div class="m-2">
+        <EditForm Model="LoginDetails" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <div class="m-2">
+                @if (!string.IsNullOrEmpty(Error))
+                {
+                    <p class="m-2 text-danger"> - @Error</p>
+                }
+            </div>
+
+            <div class="m-2">
+                <ValidationMessage class="m-2 text-danger" For="()=> LoginDetails.UserName" />
+            </div>
+            <div class="m-2">
+                <label class="m-2">UserName</label>
+                <InputText @bind-Value="LoginDetails.UserName"></InputText>
+            </div>
+            <div class="m-2">
+                <ValidationMessage class="m-2 text-danger" For="() => LoginDetails.Password" />
+            </div>
+            <div class="m-2">
+                <label class="m-2">Password</label>
+                <InputText @bind-Value="LoginDetails.Password"></InputText>
+            </div>
+            <button type="submit" class="m-3 btn btn-primary">submit</button>
+        </EditForm>
+    </div>
+</div>
+
+@code
+{
+    public LoginDetails LoginDetails { get; set; } = new LoginDetails();
+
+    public string Error { get; set; } = string.Empty;
+
+    private async Task HandleSubmit()
+    {
+        AuthServices authServices = (AuthServices)AuthProvider;
+
+        LoginResult loginResult = await authServices.LoginAsync(LoginDetails);
+        if (loginResult.Success)
+        {            
+            Navigation.NavigateTo("");           
+        }
+        else
+        {
+            Error = loginResult.Error;
+        }
+    }
+}

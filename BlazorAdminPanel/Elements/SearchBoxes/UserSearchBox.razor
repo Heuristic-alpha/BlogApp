@@ -1,0 +1,77 @@
+﻿<div class="m-2 container bg-secondary bg-opacity-25 border border-2 border-warning">
+    <div class="m-2 row">
+        <div class="m-2 col">
+            <h3 class="m-2 alert alert-info text-center">Advance Search</h3>
+        </div>
+    </div> 
+    <div class="m-2 row">
+        <div class="col">
+            <EditForm Model="SearchModel" OnSubmit="ClickHandler" id="form">
+                <span>
+                    <div class="m-3">
+                        UserId <InputNumber class="m-1" @bind-Value="SearchModel.UserId" />                 
+                    </div>
+                    <div class="m-3">
+                        UserName <InputText class="m-1" @bind-Value="SearchModel.UserName" />
+                    </div>
+                    <div class="m-3">
+                        Email <InputText class="m-1" @bind-Value="SearchModel.Email" />
+                    </div>
+                    <div class="m-3">
+                        Gender <InputSelect class="m-1" TValue="Gender" @bind-Value="@_gender">
+                                    <option value="All">All</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                               </InputSelect>
+                    </div>
+                    <div class="m-3">
+                        Skip <InputNumber class="m-1" @bind-Value="SearchModel.Skip" />
+                    </div>
+                    <div class="m-3">
+                        Take <InputNumber class="m-1" @bind-Value="SearchModel.Take" />
+                    </div>
+                </span>
+            </EditForm>
+        </div>      
+    </div>
+    <div class="row align-items-center m-2">
+        <div class="col-5">+ After search, use pagination to view results.</div>
+        <div class="col m-2"><button form="form" type="submit" class="m-2 btn btn-outline-success">Search</button></div>
+        <div class="col-5"></div>
+    </div>
+</div>
+
+@code
+{
+    public enum Gender
+    {
+        All,
+        Male,
+        Female
+    }
+
+    [Parameter]
+    public EventCallback<UserSearch> OnClick { get; set; }
+
+    public UserSearch SearchModel { get; set; } = new ();
+
+    private Gender _gender = Gender.All;
+
+    public void ClickHandler()
+    {
+        // if string is empty turn them to null:
+        if (string.IsNullOrEmpty(SearchModel.UserName)) SearchModel.UserName = null;
+        if (string.IsNullOrEmpty(SearchModel.Email)) SearchModel.Email = null;
+
+        SearchModel.IsMale = _gender switch
+        {
+            Gender.All => null,
+            Gender.Male => true,
+            Gender.Female => false,
+            _ => null,
+        };
+
+        OnClick.InvokeAsync(SearchModel);
+    }
+
+}

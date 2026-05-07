@@ -1,0 +1,19 @@
+﻿@using BlazorAdminPanel
+@using BlazorAdminPanel.Elements
+@using BlazorAdminPanel.Gadgets
+@using BlazorAdminPanel.Layout
+@using BlazorAdminPanel.Services
+@using BlogApp.Models
+@using BlogApp.Models.DataModels
+@using BlogApp.Models.JoinModels
+@using BlogApp.Services
+@inject Blackboard Blackboard
+@inject NavigationManager Navigation
+
+<div class="bg-white text-danger text-center">
+    @CurrentURL
+</div>
+
+@code {
+    private string CurrentURL => Blackboard.GetValue<string>("BaseURL") + Navigation.ToBaseRelativePath(Navigation.Uri);
+}

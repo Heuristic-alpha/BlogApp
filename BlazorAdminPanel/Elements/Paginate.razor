@@ -1,0 +1,92 @@
+﻿@typeparam ItemType
+
+<div>
+    <div class="bg-primary bg-opacity-25 btn-group">
+        <span class="border border-2 border-dark">
+            <label class="m-2 bg-black text-warning border border-1 border-danger">( @AllItems.Length )</label>
+            @{
+                int totalPage = TotalPage;
+            }
+            @if (CurrentPage != 1)
+            {
+                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(1)">@("<<")</button>
+            }
+            @if (HasPrevPage)
+            {
+                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(CurrentPage - 1)">@("<")</button>
+            }
+            @for (int i = 1; i <= totalPage; i++)
+            {
+                int localIndex = i;
+                <button class="btn m-1 text-@(CurrentPage == i ? "black" : "white")" @onclick="() => SetCurrentPageAndUpdateAsync(localIndex)">@i</button>
+            }
+            @if (HasNextPage)
+            {
+                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(CurrentPage + 1)">@(">")</button>
+            }
+            @if (CurrentPage != totalPage)
+            {
+                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(totalPage)">@(">>")</button>
+            }
+            <select class="m-2 bg-black text-light border border-1 border-danger" @onchange="SizeChangedHandler">
+                <option value="1">1</option>
+                <option value="3">3</option>
+                <option selected value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </span>
+    </div>
+</div>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public ItemType[] AllItems { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<ItemType[]> AllItemsChanged { get; set; }
+
+    [Parameter, EditorRequired]
+    public ItemType[] CurrentItems { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<ItemType[]> CurrentItemsChanged { get; set; }
+
+    public int Size { get; set; } = 5;
+
+    public int CurrentPage { get; set; } = 1;
+
+    private int TotalPage => (int)MathF.Ceiling((float)AllItems.Count() / (float)Size);
+
+    private bool HasNextPage => CurrentPage < TotalPage;
+    private bool HasPrevPage => CurrentPage > 1;
+
+    protected override async Task OnInitializedAsync()    
+    {
+        await Task.Delay(200);
+        await SetCurrentPageAndUpdateAsync(1);
+    }
+  
+    private async Task SetCurrentPageAndUpdateAsync(int currentPage)
+    {
+        CurrentPage = currentPage;
+        await UpdateCurrentItemsAsync();
+    }
+
+    private async Task UpdateCurrentItemsAsync()
+    {
+        CurrentItems = AllItems.Skip((CurrentPage - 1) * Size).Take(Size).ToArray();
+        await CurrentItemsChanged.InvokeAsync(CurrentItems);
+    }
+
+    private async Task SizeChangedHandler(ChangeEventArgs e)
+    {
+        Size = int.Parse((string)e.Value!);
+
+        // reset to first page
+        await SetCurrentPageAndUpdateAsync(1);
+    }
+}

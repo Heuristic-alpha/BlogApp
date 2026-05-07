@@ -1,0 +1,49 @@
+﻿@model PaginateItemsViewModel<PublicBlog>
+@{
+    const int MAX_CONTENT_LENGTH = 70;
+    Layout = "_HomeLayout";
+    ViewBag.Title = "List of Public Blog";
+}
+
+<div class="container-md">
+    <div class="row bg-white align-items-center">
+        <h1 class="col-12 bg-warning text-black text-center">Public Blogs</h1>
+    </div>
+    <div class="row m-2">
+        <div class="col-1"></div>
+        <div class="col m-2 bg-info bg-opacity-25 border border-2 border-primary">
+            @foreach (PublicBlog pb in Model.SelectedItems)
+            {
+                <div class="m-2 bg-warning bg-opacity-25 border border-2 border-dark">
+                    <h5 class="m-2 bg-warning bg-opacity-75 text-black text-center">@pb.Title</h5>
+                    @if (pb.Categories != null && pb.Categories.Any())
+                    {
+                        <div class="m-2 bg-info bg-opacity-25">
+                            @foreach (string cat in pb.Categories)
+                            {
+                                <span class="m-2 bg-info text-black text-center border border-1 border-white">@cat</span>
+                            }
+                        </div>
+                    }
+                    <div class="m-2 bg-info bg-opacity-10 border border-1 border-success">
+                       @(" ") Authored by <span class="text-danger">@pb.Author</span> at <span class="text-success">@pb.PublishDate</span>
+                    </div>
+                    <div class="m-2 bg-light border border-3 border-secondary">
+                        @(pb.Content.Length > MAX_CONTENT_LENGTH ? pb.Content[0..MAX_CONTENT_LENGTH] + " ..." : pb.Content)
+                    </div>
+                    <div class="m-2 align-content-center">
+                        <a class="m-2 btn btn-info" asp-action="BlogPublicView" asp-route-id="@pb.BlogId" asp-route-returnUrl="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()">Read</a>
+                    </div>                    
+                </div>
+            }
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row align-items-center m-2">
+        <div class="col"> </div>
+        <div class="col-auto m-2">
+            <vc:pagination-action controller="Home" action="BlogListPublicView" page-size="@Model!.PageSize" current-page="@Model.CurrentPage" total-item-count="@Model.AllItemsCount" />
+        </div>
+        <div class="col"> </div>
+    </div>
+</div>

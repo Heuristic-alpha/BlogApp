@@ -1,0 +1,57 @@
+﻿@page "/category/edit/{id:long}"
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Category Edit</PageTitle>
+<h1 class="bg-warning text-black text-center">Category Edit</h1>
+
+<EditForm Model="@Category" OnValidSubmit="async () => await HandleSubmit()">
+    <DataAnnotationsValidator />
+    <div class="m-2 border border-2 border-info">
+        @if (!string.IsNullOrEmpty(Error))
+        {
+            <div class="text-danger m-2">- @Error</div>
+        }          
+        <ValidationMessage class="m-2 text-danger" For="() => Category.Name" />
+        <label class="form-label m-2">Name</label>
+        <InputText class="form-control m-2" @bind-Value="@Category.Name" />
+    </div>
+
+    <div class="form-group m-5">
+        <button type="submit" class="btn btn-warning">Edit</button>
+    </div>
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public long Id { get; set; }
+
+    public Category Category { get; set; } = new Category();
+
+    public string Error { get; set; } = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Category? category = await Http.GetFromJsonAsync<Category>($"/api/Category/Get/{Id}");
+        if (category != null)
+        {
+            Category = category;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        var response = await Http.PutAsJsonAsync<Category>("/api/Category/Update", Category);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("category/list");
+        }
+        else
+        {
+            Error = await response.Content.ReadAsStringAsync();
+        }
+
+    }
+}

@@ -1,0 +1,105 @@
+﻿@page "/user/list"
+@attribute [Authorize(Roles = Constants.Roles.Admins)]
+
+@using System.Globalization
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject JsonSerializerOptions JSO
+
+<PageTitle>Users list</PageTitle>
+<h1 class="bg-secondary text-white text-center">Users list</h1>
+
+<UserSearchBox OnClick="async(us)=>{ _userSearch = us; await UpdateListAsync();}"/>
+
+<div class="container-md">
+    <div class="row row-cols-md-1 bg-light">
+        <table class="table table-bordered table-hover border border-2 border-dark">
+            <thead>
+                <tr class="fa-bold">
+                    <th><SortArrayButton ItemT="UserDetailsDto" PropertyT="long" @bind-Values="@SelectedAppUsers" Selector="(u) => u.AppUserId">AppUserId</SortArrayButton></th>                   
+                    <th><SortArrayButton ItemT="UserDetailsDto" PropertyT="string" @bind-Values="@SelectedAppUsers" Selector="(u) => u.UserName" Comparer="StringComparer.OrdinalIgnoreCase">UserName</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="UserDetailsDto" PropertyT="string" @bind-Values="@SelectedAppUsers" Selector="(u) => u.Email" Comparer="StringComparer.OrdinalIgnoreCase">Email</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="UserDetailsDto" PropertyT="bool" @bind-Values="@SelectedAppUsers" Selector="(u) => u.IsMale">Gender</SortArrayButton></th>
+                    <th>User Roles</th>
+                    <th><SortArrayButton ItemT="UserDetailsDto" PropertyT="DateTime" @bind-Values="@SelectedAppUsers" Selector="(u) => u.CreationDateTime">CreationDateTime</SortArrayButton></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (SelectedAppUsers.Length != 0)
+                    @for (int i = 0; i < SelectedAppUsers.Length; i++)
+                    {
+                        long localI = i;
+                        UserDetailsDto userDetails = SelectedAppUsers[localI];
+                        <tr>
+                            <td>@userDetails.AppUserId</td>
+                            <td>@userDetails.UserName</td>
+                            <td>@userDetails.Email</td>
+                            <td class="text-center text-@GetGenderColor(userDetails.IsMale)">@(userDetails.IsMale ? "Male" : "Female")</td>
+                            <td class="text-success">@(string.Join(", ",userDetails.RolesDict?.Where(kvp => kvp.Value == true).Select(kvp => kvp.Key) ?? Enumerable.Empty<string>()))</td>
+                            <td>@userDetails.CreationDateTime.ToString(CultureInfo.InvariantCulture)</td>
+                            <td>
+                                <button class="btn btn-outline-danger m-1" @onclick="async () => await HandleDelete(userDetails.AppUserId)">Delete</button>
+                                <button class="btn btn-outline-success m-1" @onclick="@(() => Navigation.NavigateTo($"user/edit/{userDetails.AppUserId}"))">Edit</button>
+                                <button class="btn btn-outline-info m-1" @onclick="@(() => Navigation.NavigateTo($"user/details/{userDetails.AppUserId}"))">Details</button>
+                            </td>
+                        </tr>
+                    }
+                else
+                {
+                    <tr><td class="text-center text-danger">List is empty</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row bg-white align-items-center m-2">
+        <div class="col"></div>
+        <div class="col-auto"><Paginate ItemType="UserDetailsDto" @bind-AllItems="@AllAppUsers" @bind-CurrentItems="@SelectedAppUsers" /></div>
+        <div class="col"></div>
+    </div>
+    <div class="row bg-white align-items-center m-2">
+        <div class="col-5"></div>
+        <div class="col m-2"><a class="btn btn-outline-primary" @onclick="@(() => Navigation.NavigateTo("user/create"))">Create new User</a></div>
+        <div class="col-5"></div>
+    </div>
+</div>
+
+@code
+{
+    [Parameter]
+    public UserDetailsDto[] AllAppUsers { get; set; } = Array.Empty<UserDetailsDto>();
+
+    public UserDetailsDto[] SelectedAppUsers { get; set; } = Array.Empty<UserDetailsDto>();
+
+    private UserSearch _userSearch = new ();   
+
+    private async Task UpdateListAsync()
+    {      
+        SelectedAppUsers = Array.Empty<UserDetailsDto>();
+        var response = await Http.PostAsJsonAsync<UserSearch>("/api/AppUser/GetAll", _userSearch);
+        if (response.IsSuccessStatusCode)
+        {
+            string json = await response.Content.ReadAsStringAsync();
+            AllAppUsers = JsonSerializer.Deserialize<UserDetailsDto[]>(json, JSO) ?? Array.Empty<UserDetailsDto>();
+        }             
+    }
+
+    private async Task HandleDelete(long id)
+    {
+        var response = await Http.DeleteAsync($"/api/AppUser/Delete/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            await UpdateListAsync();
+        }
+        else
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new Exception($"You dont have any premision to delete this user {await response.Content.ReadAsStringAsync()}");
+            }
+            throw new Exception($"Error on Delete {await response.Content.ReadAsStringAsync()}");
+        }
+    }
+
+    private string GetGenderColor(bool isMale) => isMale ? "info" : "danger";
+}

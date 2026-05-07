@@ -1,0 +1,68 @@
+﻿@page "/comment/details/{id:long}"
+
+<PageTitle>Comment Details</PageTitle>
+<h1 class="bg-info text-black text-center">Comment Details</h1>
+
+<EditForm Model="@Comment">
+    <DataAnnotationsValidator />
+
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Id</label>
+        <InputNumber class="m-2 form-control" @bind-Value="@Comment.CommentId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <span>
+            <label class="form-label m-2">Content</label>
+            <ValidationMessage For="() => Comment.StringContent" />
+        </span>
+        <InputTextArea class="form-control m-2" @bind-Value="@Comment.StringContent" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Is Confirmed?</label>
+        <InputCheckbox class="m-2" @bind-Value="@Comment.IsConfirmed" disabled />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Blog Id</label>
+        <ValidationMessage For="() => Comment.BlogId" />
+        <InputNumber class="m-2 form-control" @bind-Value="@Comment.BlogId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">AppUser Id</label>
+        <ValidationMessage For="() => Comment.AppUserId" />
+        <InputNumber class="form-control m-2" @bind-Value="@Comment.AppUserId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info text-success">
+        <label class="form-label m-2">Likes</label>
+        <input class="form-control m-2" name="like" value="@Comment.Like" readonly/>
+    </div>
+    <div class="m-2 border border-2 border-info text-danger">
+        <label class="form-label m-2">Dislikes</label>
+        <input class="form-control m-2" name="dislike" value="@Comment.Dislike" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Creation Date</label>
+        <ValidationMessage For="() => Comment.CreationDateTime" />
+        <InputDate class="form-control m-2" @bind-Value="@Comment.CreationDateTime" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <RenderComment Comment="@Comment"/>
+    </div>
+</EditForm>
+
+@code
+{
+    [Inject]
+    public HttpClient? Http { get; set; }
+
+    [Parameter]
+    public long Id { get; set; } // this Id is the CommentId we wants to Details.
+
+    public Comment Comment { get; set; } = new();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Http == null) return;
+        Comment = await Http.GetFromJsonAsync<Comment>($"/api/Comment/Get/{Id}") ?? new();
+    }
+
+}

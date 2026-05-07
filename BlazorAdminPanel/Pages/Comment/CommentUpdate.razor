@@ -1,0 +1,82 @@
+﻿@page "/comment/edit/{id:long}"
+
+<PageTitle>Update Comment</PageTitle>
+<h1 class="bg-warning text-black text-center">Update Comment</h1>
+
+<EditForm Model="@Comment" OnValidSubmit="async () => await HandleSubmit()">
+    <DataAnnotationsValidator />
+
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Id</label>
+        <InputNumber class="m-2 form-control" @bind-Value="@Comment.CommentId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <span>
+            <label class="form-label m-2">Content</label>
+            <ValidationMessage For="() => Comment.StringContent" />
+        </span>
+        <InputTextArea class="form-control m-2" @bind-Value="@Comment.StringContent" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Is Confirmed?</label>
+        <ValidationMessage For="() => Comment.IsConfirmed" />
+        <InputCheckbox class="m-2" @bind-Value="@Comment.IsConfirmed" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Blog Id</label>
+        <ValidationMessage For="() => Comment.BlogId" />
+        <InputNumber class="m-2 form-control" @bind-Value="@Comment.BlogId" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">AppUser Id (User who will owned this comment, IT IS DIRTY TO CREATE/UPDATE COMMENT AS OTHER USERS)</label>
+        <ValidationMessage For="() => Comment.AppUserId" />
+        <InputNumber class="form-control m-2" @bind-Value="@Comment.AppUserId" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Creation Date</label>
+        <ValidationMessage For="() => Comment.CreationDateTime" />
+        <InputDate class="form-control m-2" @bind-Value="@Comment.CreationDateTime" />
+    </div>
+    <div class="form-group m-5">             
+         <button type="submit" class="btn btn-warning">Update</button>      
+    </div>
+</EditForm>
+
+@code
+{
+    [Inject]
+    public HttpClient? Http { get; set; }
+
+    [Inject]
+    public NavigationManager? Navigation { get; set; }
+
+    [Inject]
+    public IJSRuntime? JSRuntime { get; set; }
+
+    [Parameter]
+    public long Id { get; set; } // this Id is the CommentId we wants to Update.
+
+    public Comment Comment { get; set; } = new();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Http == null) return;
+        Comment = await Http.GetFromJsonAsync<Comment>($"/api/Comment/Get/{Id}") ?? new();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Http == null) return;
+
+        var response = await Http.PutAsJsonAsync<Comment>("/api/Comment/Update", Comment);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation?.NavigateTo("comment/list");         
+        }
+        else
+        {
+            JSRuntime?.InvokeVoidAsync("alert",await response.Content.ReadAsStringAsync());
+        }
+    }
+
+}

@@ -1,0 +1,12 @@
+﻿@using BlogApp.Models.JoinModels
+
+@model Blog
+@{
+   // const int MAX_CONTENT_LENGTH = 80;
+    Layout = "_HomeLayout";
+    ViewBag.Title = "Read Blog";
+}
+
+<div>
+    <vc:render-blog blog="@Model" />
+</div>

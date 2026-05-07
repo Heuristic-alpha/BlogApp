@@ -1,0 +1,68 @@
+﻿@using BlogApp.Infrastructures
+@using BlogApp.Models
+@using BlogApp.ViewModels
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject UrlLocator urlLocator
+@{
+    IdentityAppUser? identityAppUser = Html.ViewContext.HttpContext.GetIdentityAppUser();
+    AppUser? appUser = Html.ViewContext.HttpContext.GetAppUser();   
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/my-css/StyleSheet.css" />
+    <base href="~/" />   
+    <title>@ViewBag.Title</title>
+</head>
+<body class="font-monospace">
+    <div class="container-fluid bg-dark">
+        <div class="row text-center align-items-center">
+            <div class="col-3">
+                <a class="btn btn-outline-light" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="btn btn-outline-light" href="@Url.Content("webassembly")">Admins Panel</a>
+                <a class="btn btn-outline-light" asp-controller="Home" asp-action="About">About</a>
+                <component type="@typeof(BlogApp.Blazor.RealTimeWatch)" render-mode="Server" param-UpdateInterval="500" />
+            </div>
+            <div class="col">
+                <a class="btn fs-2 text-light animation-fadeOutIn-1" asp-controller="Home" asp-action="Index"><h2><b>Blog App</b></h2></a>
+            </div>
+            <div class="col-3 m-2">
+               
+                @if (identityAppUser != null) // user exist:
+                {
+                    <div class=" m-2">
+                        <img src="@(urlLocator.Images.Static.GetUserProfileIcon(appUser!.IsMale))" alt="User Icon" />
+                    </div>
+                    <div class="text-light m-2">
+                        UserName: <span class="text-info">@identityAppUser.UserName</span>
+                    </div>
+                    <div class="text-light m-2">
+                        Email: <span class="text-info">@identityAppUser.Email</span>
+                    </div>
+                    <div class="m-2">                     
+                        <a asp-page="/Dashboard" class="btn btn-warning">Dashboard</a>
+                    </div>
+                }
+                else // there is not logined user
+                {
+                    <div class="m-2 text-warning">
+                        You are not Logged in
+                    </div>
+                    <div class="m-2">
+                        <a asp-page="/Account/Login" class="btn btn-outline-warning">Login</a>
+                    </div>
+                }
+                
+            </div>
+        </div>
+    </div>
+    <div>       
+        @RenderBody()
+        <script src="_framework/blazor.server.js"></script>
+    </div>
+</body>
+</html>

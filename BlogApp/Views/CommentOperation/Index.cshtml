@@ -1,0 +1,62 @@
+﻿@inject ILogger< PaginateItemsViewModel<Comment>> Logger
+@inject UrlLocator urlLocator
+@model PaginateItemsViewModel<Comment>
+@{
+    const int MAX_CONTENT_LENGTH = 50;
+    Layout = "_HomeLayout";
+    ViewBag.Title = "List of user Comment";
+    TempData["ReturnUrl"] = Html.ViewContext.HttpContext.Request.Path.ToUriComponent() + Html.ViewContext.HttpContext.Request.QueryString.ToString();
+}
+
+<div class="container-md">
+    <div class="row bg-white align-items-center">
+        <h1 class="col-12 bg-info text-black text-center">My Comments</h1>
+    </div>
+    <div class="row row-cols-md-1 bg-light">
+        <div class="bg-secondary text-light text-center">List of all Comments:</div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr class="fa-bold">
+                    <th>Blog Tile</th>
+                    <th>Comment Content</th>
+                    <th>Creation Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.SelectedItems.Length != 0)
+                    @for (int i = 0; i < Model.SelectedItems.Length; i++)
+                    {
+                        <tr>                          
+                            <td>@(Model.SelectedItems[i].Blog?.Title ?? "Unknow")</td>
+                            <td>@(Model.SelectedItems[i].StringContent.Length > MAX_CONTENT_LENGTH ? Model.SelectedItems[i].StringContent[0..MAX_CONTENT_LENGTH] + " ..." : Model.SelectedItems[i].StringContent)</td>                           
+                            <td>@Model.SelectedItems[i].CreationDateTime.ToString()</td>
+                            <td>
+                                <span>
+                                   @*  <a class="btn btn-outline-info m-1" asp-action="Read" asp-route-id="@Model.SelectedItems[i].BlogId">Details</a>
+                                    <a class="btn btn-outline-success m-1" asp-action="Update" asp-route-id="@Model.SelectedItems[i].BlogId">Edit</a>
+                                    *@
+                                    <form method="post" asp-action="Delete">
+                                        <input hidden name="id" value="@Model.SelectedItems[i].CommentId" />
+                                        <button class="btn btn-outline-danger m-1" type="submit">Delete</button>
+                                    </form> 
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                else
+                {
+                    <tr><td class="text-center text-danger">List is empty</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row align-items-center m-2">
+        <div class="col"> </div>
+        <div class="col-auto m-2">
+            <vc:pagination-action controller="CommentOperation" action="Index" page-size="@Model!.PageSize" current-page="@Model.CurrentPage" total-item-count="@Model.AllItemsCount" />
+        </div>
+        <div class="col"> </div>
+    </div>
+</div>
+

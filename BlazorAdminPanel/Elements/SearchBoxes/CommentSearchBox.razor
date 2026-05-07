@@ -1,0 +1,79 @@
+﻿<div class="m-2 container bg-secondary bg-opacity-25 border border-2 border-warning">
+    <div class="m-2 row">
+        <div class="m-2 col">
+            <h3 class="m-2 alert alert-info text-center">Advance Search</h3>
+        </div>
+    </div>
+    <div class="m-2 row">
+        <div class="col">
+            <EditForm Model="SearchModel" OnSubmit="ClickHandler" id="form">
+                <span>
+                    <div class="m-3">
+                        CommentId <InputNumber class="m-1" @bind-Value="SearchModel.CommentId" />
+                    </div>
+                    <div class="m-3">
+                        BlogId <InputNumber class="m-1" @bind-Value="SearchModel.BlogId" /> (blog who own this)
+                    </div>
+                    <div class="m-3">
+                        UserId <InputNumber class="m-1" @bind-Value="SearchModel.AppUserId" /> (user who own this)
+                    </div>                  
+                    <div class="m-3">
+                        Text <InputText class="m-1" @bind-Value="SearchModel.CommentText" />
+                    </div>
+                    <div class="m-3">
+                        Confirmed <InputSelect class="m-1" TValue="Confirm" @bind-Value="@_confirm">
+                                     <option value="All">All</option>
+                                     <option value="Yes">Yes</option>
+                                     <option value="No">No</option>
+                                 </InputSelect>
+                    </div>
+                    
+                    <div class="m-3">
+                        Skip <InputNumber class="m-1" @bind-Value="SearchModel.Skip" />
+                    </div>
+                    <div class="m-3">
+                        Take <InputNumber class="m-1" @bind-Value="SearchModel.Take" />
+                    </div>
+                </span>
+            </EditForm>
+        </div>
+    </div>
+    <div class="row align-items-center m-2">
+        <div class="col-5">+ After search, use pagination to view results.</div>
+        <div class="col m-2"><button form="form" type="submit" class="m-2 btn btn-outline-success">Search</button></div>
+        <div class="col-5"></div>
+    </div>
+</div>
+
+@code
+{
+    public enum Confirm
+    {
+        All,
+        Yes,
+        No
+    }
+
+    [Parameter]
+    public EventCallback<CommentSearch> OnClick { get; set; }
+
+    public CommentSearch SearchModel { get; set; } = new();
+
+    private Confirm _confirm = Confirm.All;
+
+    public void ClickHandler()
+    {
+        // if string is empty turn them to null:
+        if (string.IsNullOrEmpty(SearchModel.CommentText)) SearchModel.CommentText = null;
+
+        SearchModel.IsConfirmed = _confirm switch
+        {
+            Confirm.All => null,
+            Confirm.Yes => true,
+            Confirm.No => false,
+            _ => null,
+        };       
+
+        OnClick.InvokeAsync(SearchModel);
+    }
+}

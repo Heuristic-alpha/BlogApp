@@ -1,0 +1,140 @@
+﻿@page "/blog/edit/{id:long}"
+@page "/blog/create"
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Blog @Mode.ToString()</PageTitle>
+<h1 class="bg-warning text-black text-center">Blog @Mode.ToString()</h1>
+
+<EditForm Model="@Blog" OnValidSubmit="async () => await HandleSubmit()">
+    <DataAnnotationsValidator />
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Id</label>
+        <InputNumber class="m-2 form-control" @bind-Value="@Blog.BlogId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <span>
+            <label class="form-label m-2">Title</label>
+            <ValidationMessage For="() => Blog.Title" />
+        </span>
+        <InputText class="form-control m-2" @bind-Value="@Blog.Title" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <span>
+            <label class="form-label m-2">Content</label>
+            <ValidationMessage For="() => Blog.BlogContent" />
+        </span>
+        <InputTextArea class="form-control m-2" @bind-Value="@Blog.BlogContent" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">AppUser Id</label>
+        <ValidationMessage For="() => Blog.AppUserId" />
+        <InputNumber class="form-control m-2" @bind-Value="@Blog.AppUserId" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Is Public</label>
+        <ValidationMessage For="() => Blog.IsPublic" />
+        <InputCheckbox @bind-Value="@Blog.IsPublic" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Is Confirmed</label>
+        <ValidationMessage For="() => Blog.IsConfirmed" />
+        <InputCheckbox @bind-Value="@Blog.IsConfirmed" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Creation Date</label>
+        <ValidationMessage For="() => Blog.CreationDateTime" />
+        <InputDate class="form-control m-2" @bind-Value="@Blog.CreationDateTime" readonly />
+    </div>
+    <div class="m-2 border border-2 border-primary">
+        <h3 class="m-2 bg-primary text-white text-center">Categories</h3>
+        @try
+        {
+            <div class="m-2 bg-info bg-opacity-10">
+                <h6 class="bg-success bg-opacity-50 text-black m-2">Included</h6>
+                <div class="m-2">                  
+                    @for (int i = 0; i < IncludedCategories.Count; i++)
+                    {
+                        int ci = i;
+                        Category cat = IncludedCategories[ci];
+                        <button @key="@cat.CategoryId" class="btn btn-outline-secondary m-2" @onclick="() => {  ExcludedCategories.Add(cat);    IncludedCategories.RemoveAt(ci); }">@cat.Name</button>
+                    }
+                </div>
+                <h6 class="bg-danger bg-opacity-50 text-black m-2">Excluded</h6>
+                <div class="m-2">
+                    @for (int i = 0; i < ExcludedCategories.Count; i++)
+                    {
+                        int ci = i;
+                        Category cat = ExcludedCategories[ci];
+                        <button @key="@cat.CategoryId" class="btn btn-outline-secondary m-2" @onclick="() => {  IncludedCategories.Add(cat);   ExcludedCategories.RemoveAt(ci); }">@cat.Name</button>
+                    }
+                </div>
+            </div>
+        }
+        catch
+        {
+            <p class="text-danger">Error has accured</p>
+        }
+    </div>
+    <div class="form-group m-5">
+        @if (Mode == ActionMode.Create)
+        {
+            <button type="submit" class="btn btn-primary">@Mode.ToString()</button>
+        }
+        else if (Mode == ActionMode.Update)
+        {
+            <button type="submit" class="btn btn-warning">@Mode.ToString()</button>
+        }
+    </div>
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public long Id { get; set; }
+
+    public Blog Blog { get; set; } = new Blog();
+
+    public List<Category> IncludedCategories { get; set; } = new();
+    public List<Category> ExcludedCategories { get; set; } = new();
+
+    public ActionMode Mode => Id == 0 ? ActionMode.Create : ActionMode.Update;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ActionMode mode = Mode;
+        if (mode == ActionMode.Update)
+        {
+            Blog? blog = await Http.GetFromJsonAsync<Blog>($"/api/Blog/Get/{Id}");
+            if (blog != null)
+            {
+                Blog = blog;
+            }
+        }
+
+        // query for all Included and Excluded categories:
+        ExcludedCategories.AddRange((await Http.GetFromJsonAsync<IEnumerable<Category>>("/api/Category/GetAll")) ?? Enumerable.Empty<Category>());
+        IncludedCategories = ExcludedCategories.Where(exc => Blog.BlogCategories?.Any(bc => bc.CategoryId == exc.CategoryId) ?? false).ToList();
+        ExcludedCategories.RemoveAll(c => IncludedCategories.Contains(c));
+    }
+
+    private async Task HandleSubmit()
+    {
+        Blog.BlogCategories = IncludedCategories.Select(c => new BlogCategory() { BlogId = Blog.BlogId, CategoryId = c.CategoryId }); 
+
+        if (Mode == ActionMode.Create)
+        {
+            var response = await Http.PostAsJsonAsync<Blog>("/api/Blog/Create", Blog);
+            if (response.IsSuccessStatusCode) Navigation.NavigateTo("blog/list");
+        }
+        else if (Mode == ActionMode.Update)
+        {
+            Blog.AppUser = null;
+            Blog.Comments = null;
+                    
+            var response = await Http.PutAsJsonAsync<Blog>("/api/Blog/Update", Blog);
+            if (response.IsSuccessStatusCode) Navigation.NavigateTo("blog/list");
+        }
+    }
+}

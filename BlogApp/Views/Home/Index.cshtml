@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "_HomeLayout";
+    ViewBag.Title = "Home";
+    AppUser? appUser = Html.ViewContext.HttpContext.GetAppUser();
+}
+
+<div class="d-flex align-items-center justify-content-center bg-dark">
+     <h1 class="text-light display-1 text-center mb-4 animation-fadeOutIn-2 m-2">Blog App</h1>    
+</div>
+<div class="d-flex align-items-center justify-content-center bg-dark">   
+     <h3 class="text-success display-4 text-center mb-4 animation-fadeOutIn-3 m-2">Is The Best Blog Web App In The World!</h3>
+</div>
+@if (appUser != null)
+{
+    <div class="d-flex align-items-center justify-content-center bg-dark">
+        <h4 class="text-light display-5 text-center animation-fadeOutIn-3 m-2">
+            Dear <span class="text-info">@appUser.DisplayName</span> Lets Get Started! (go to your  <a asp-page="/Dashboard" class="text-warning" >Dashboard</a>)
+        </h4>
+    </div>
+}
+else
+{
+    <div class="d-flex align-items-center justify-content-center bg-dark">
+        <h4 class="text-light text-center animation-fadeOutIn-3 m-2">
+             Login To Get Started
+        </h4>
+    </div>
+    <div class="d-flex align-items-center justify-content-center bg-dark">
+        <a class="btn btn-outline-primary m-4" asp-page="/Account/Login">Login</a>
+    </div>
+}
+<div class="d-flex align-items-center justify-content-center bg-dark">
+    <div class="text-info display-4 text-center mb-4 animation-fadeOutIn-1 m-2">
+       See <a class="m-2 btn btn-outline-info" asp-action="BlogListPublicView">Public Blogs</a>
+    </div>
+</div>

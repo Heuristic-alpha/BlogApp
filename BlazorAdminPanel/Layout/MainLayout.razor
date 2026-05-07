@@ -1,0 +1,58 @@
+﻿@inherits LayoutComponentBase
+@inject NavManagerHistory NavManagerHistory
+@inject Blackboard Blackboard
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
+
+<ErrorBoundary Context="error">
+   <ChildContent>
+        <div class="page">
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+
+            <main>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-2 top-row-left">
+                            @if (NavManagerHistory.HasBack)
+                            {
+                                <button class="btn btn-info" @onclick="() => NavManagerHistory.GoBack()">Back</button>
+                            }
+                        </div>
+                        <div class="col top-row-right">
+                            @{
+                                ClaimsPrincipal user = ((AuthServices)AuthProvider).User;
+                            }
+                            @if (user.Identity?.IsAuthenticated ?? false)
+                            {
+                                <span>
+                                    UserName: <span class="m-2 text-success">@user.Identity.Name</span> Email: <span class="m-2 text-success">@(user.FindFirstValue("email"))</span>
+                                    <span class="m-2"><button class="btn btn-danger" @onclick="@(() => Navigation.NavigateTo(AuthServices.LogoutPagePath))">Logout</button></span>
+                                </span>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo(AuthServices.LoginPagePath))">Login</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <article class="content px-4">
+                    @Body
+                </article>
+            </main>
+        </div>
+   </ChildContent>
+    <ErrorContent>
+        <div class="m-2 border border-2 border-danger">
+            <h2 class="m-2 bg-danger text-black text-center">Error</h2>
+            <div class="m-2 text-center">
+                @error.Message
+            </div>
+            <div class="m-2 text-secondary">
+                @error.ToString()
+            </div>
+        </div>
+    </ErrorContent>
+</ErrorBoundary>

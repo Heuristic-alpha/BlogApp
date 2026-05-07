@@ -1,0 +1,36 @@
+﻿@using System.Globalization
+@implements IDisposable
+
+<div class="bg-info m-2 border border-light col">
+    <span class="text-black">Server Clock: @DateTime.ToString("G", CultureInfo.InvariantCulture)</span>
+</div>
+
+
+@code 
+{
+    [Parameter]
+    public int UpdateInterval { get; set; } = 1000;
+
+    public DateTime DateTime { get; set; } = DateTime.Now;
+
+    private CancellationTokenSource _tokenSource = new();
+
+#pragma warning disable CS1998, CS4014
+    protected override async Task OnInitializedAsync() => StartUpdateAsync(_tokenSource.Token);
+#pragma warning restore CS1998, CS4014
+
+    private async Task StartUpdateAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            await Task.Delay(UpdateInterval);
+            DateTime = DateTime.Now;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        _tokenSource.Dispose();
+    }
+}

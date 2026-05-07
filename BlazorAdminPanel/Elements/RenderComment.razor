@@ -1,0 +1,53 @@
+﻿@inject NavigationManager Navigation
+
+<div class="container border border-info m-1 bg-light">
+    <div class="row m-2">
+        <div class="col m-2">
+            <span>
+                <img src="@GetUserProfileIcon(Comment.AppUser?.IsMale ?? true)" alt="User Icon" />
+                <label class="text-black">
+                    @(Comment.AppUser?.DisplayName ?? "Debug: appuser displayName is null")
+                </label>
+                <a class="text-info m-2" @onclick="@(() => Navigation.NavigateTo($"user/details/{Comment.AppUserId}"))">user details</a>
+                <a class="text-info m-2" @onclick="@(() => Navigation.NavigateTo($"comment/details/{Comment.CommentId}"))">comment details</a>
+                <a class="text-info m-2" @onclick="@(() => Navigation.NavigateTo($"blog/details/{Comment.BlogId}"))">blog details</a>
+            </span>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col">
+            <textarea disabled class="form-control-plaintext input-group-text text-start" @bind="@Comment.StringContent"></textarea>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col">
+            <span class="text-success">
+                <img src="@(GetFaceEmojiIcon(true))" />
+                <label>@Comment.Like</label>
+            </span>
+
+        </div>
+        <div class="col">
+            <span class="text-danger">
+                <img src="@(GetFaceEmojiIcon(false))" />
+                <label>@Comment.Dislike</label>
+            </span>
+        </div>
+    </div>
+</div>
+@code
+{
+    [Parameter, EditorRequired]
+    public Comment Comment { get; set; }
+
+    public string GetFaceEmojiIcon(bool isHappy)
+    {       
+        return isHappy ? "images/static/icon-happy-face.png" : "images/static/icon-unhappy-face.png";
+    }
+
+    public string GetUserProfileIcon(bool isMale)
+    {
+        if (isMale) return "images/static/icon-male.svg";
+        else return "images/static/icon-female.svg";
+    }
+}

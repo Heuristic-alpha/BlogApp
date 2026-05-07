@@ -1,0 +1,31 @@
+﻿@using BlogApp.Infrastructures
+@using BlogApp.Models
+@using BlogApp.ViewModels
+@model PaginationViewModel
+
+<div class="container">
+    <div class="row bg-secondary btn-group">
+        <span class="border ">
+        @if(Model.CurrentPage != 1)
+        {
+            <a class="m-2 text-warning" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = 1, size = Model.PageSize }))">@("first")</a>
+        }       
+        @if (Model.HasPrevPage)
+        {
+            <a class="m-2 text-white" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = Model.CurrentPage - 1, size = Model.PageSize }))">@("<")</a>
+        }
+        @for (int i = 1; i <= Model.TotalPage; i++)
+        {
+            <a class="m-1 text-@(Model.CurrentPage == i ? "black" : "info")" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = i, size = Model.PageSize }))">@i</a>
+        }
+        @if (Model.HasNextPage)
+        {
+            <a class="m-2 text-white" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = Model.CurrentPage + 1, size = Model.PageSize }))">@(">")</a>
+        }
+        @if (Model.CurrentPage != Model.TotalPage)
+        {
+            <a class="m-2 text-warning" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = Model.TotalPage, size = Model.PageSize }))">@("last")</a>
+        }
+        </span>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+﻿@page "/blog/details/{id:long}"
+
+@using BlazorAdminPanel
+@using BlazorAdminPanel.Elements
+@using BlazorAdminPanel.Gadgets
+@using BlazorAdminPanel.Layout
+@using BlazorAdminPanel.Services
+@using BlogApp.Models
+@using BlogApp.Models.DataModels
+@using BlogApp.Models.Enums
+@using BlogApp.Models.JoinModels
+@using BlogApp.Services
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Blog Details</PageTitle>
+<h1 class="bg-info text-black text-center">Blog Details</h1>
+
+<EditForm Model="@Blog">
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Id</label>
+        <InputNumber class="m-2 form-control" @bind-Value="@Blog.BlogId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <span>
+            <label class="form-label m-2">Title</label>
+        </span>
+        <InputText class="form-control m-2" @bind-Value="@Blog.Title" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <span>
+            <label class="form-label m-2">Content</label>
+        </span>
+        <InputTextArea class="form-control m-2" @bind-Value="@Blog.BlogContent" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">AppUser Id</label>
+        <InputNumber class="form-control m-2" @bind-Value="@Blog.AppUserId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Is Public</label>
+        <InputCheckbox @bind-Value="@Blog.IsPublic" disabled />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Is Confirmed</label>
+        <InputCheckbox @bind-Value="@Blog.IsConfirmed" disabled />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Creation Date</label>
+        <InputDate class="form-control m-2" @bind-Value="@Blog.CreationDateTime" readonly />
+    </div>
+    <div class="m-2 border border-2 border-primary">
+        <h3 class="m-2 bg-primary text-white text-center">Categories</h3>
+        <div class="m-2 bg-secondary bg-opacity-10">
+            @if(Blog.BlogCategories != null && Blog.BlogCategories.Any())
+            {
+                @foreach (BlogCategory bc in Blog.BlogCategories)
+                {
+                    <button class="m-2 btn btn-outline-primary">@bc.Category!.Name</button>
+                }
+            }
+            else
+            {
+                <p class="p-2 text-danger text-center">There is no categories</p>
+            }
+        </div>
+    </div>
+    <div class="m-2 border border-2 border-success">
+        <RenderBlog Blog="@Blog"/>
+    </div>
+    <div class="m-2 border border-2 border-success">
+        <h3 class="m-2 bg-success text-white text-center">Blog Comments</h3>
+        <button class="m-2 btn btn-info text-black" @onclick="@(() => Navigation.NavigateTo($"comment/list/forblog/{Id}"))">GoTo Blog Comment list</button>
+        <button class="m-2 btn btn-warning text-black" @onclick="@(async () => await LoadComments())">Click to load</button>
+        <div class="m-2">
+            @if (Comments.Length != 0)
+            {
+                @for (int i = 0; i < Comments.Length; i++)
+                {
+                    <div class="m-2">
+                        <RenderComment Comment="@Comments[i]" />
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-danger">Empty</p>
+            }
+        </div>
+    </div>
+
+</EditForm>
+
+@code
+{    
+    [Parameter]
+    public long Id { get; set; }
+
+    public Blog Blog { get; set; } = new Blog();
+
+    public Comment[] Comments { get; set; } = Array.Empty<Comment>();
+
+    protected override async Task OnParametersSetAsync()
+    { 
+        Blog? blog = await Http.GetFromJsonAsync<Blog>($"/api/Blog/Get/{Id}");
+        if (blog != null) Blog = blog;
+    }
+
+    private async Task LoadComments()
+    {      
+        Comments = await Http.GetFromJsonAsync<Comment[]>($"/api/Comment/GetAllForBlog/{Id}") ?? Array.Empty<Comment>();
+    }
+}

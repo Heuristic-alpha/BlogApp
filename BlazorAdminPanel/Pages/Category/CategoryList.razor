@@ -1,0 +1,122 @@
+﻿@page "/category/list"
+@attribute [Authorize(Roles = Constants.Roles.Admins)]
+
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<PageTitle>Category list</PageTitle>
+<h1 class="bg-secondary text-white text-center">Category list</h1>
+
+<div class="container-md">
+    <div class="row row-cols-md-1 bg-light">
+        <table class="table table-striped table-bordered table-hover border border-2 border-dark">
+            <thead>
+                <tr class="fa-bold">
+                    <th><SortArrayButton ItemT="Category" PropertyT="long" @bind-Values="@SelectedCategories" Selector="(Category c) => c.CategoryId">Id</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Category" PropertyT="string" @bind-Values="@SelectedCategories" Selector="(Category c) => c.Name">Name</SortArrayButton></th>                   
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (SelectedCategories.Length != 0)
+                    @for (int i = 0; i < SelectedCategories.Length; i++)
+                    {
+                        long localI = i;
+                        Category category = SelectedCategories[localI];
+                        <tr>
+                            <td>@category.CategoryId</td>
+                            <td>@(category.Name)</td>                           
+                            <td>
+                                <button class="btn btn-outline-danger" @onclick="async () => await HandleDelete(category.CategoryId)">Delete</button>
+                                <a class="btn btn-outline-success m-1" @onclick="@(() => Navigation.NavigateTo($"category/edit/{category.CategoryId}"))">Edit</a>
+                                @* <a class="btn btn-outline-info m-1" @onclick="@(() => Navigation.NavigateTo($"category/details/{category.CategoryId}"))">Details</a> *@
+                            </td>
+                        </tr>
+                    }
+                else
+                {
+                    <tr><td class="text-center text-danger">List is empty</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row bg-white align-items-center m-2">
+        <div class="col"></div>
+        <div class="col-auto"><Paginate ItemType="Category" @bind-AllItems="@AllCategories" @bind-CurrentItems="@SelectedCategories" /></div>
+        <div class="col"></div>
+    </div>
+    
+        <div class="row bg-white align-items-center m-2">
+            <div class="col-3"></div>
+            <div class="col m-2 border border-5 border-primary">
+                <h3 class="bg-primary text-black text-center m-2">Create new Category</h3>
+                <EditForm Model="NewCategory" OnValidSubmit="HandleCreate">
+                    <DataAnnotationsValidator />
+                    <div class="m-2">
+                        @if (!string.IsNullOrEmpty(_createCategoryError))
+                        {
+                            <p class="text-danger">- @_createCategoryError</p>
+                        }
+                        <ValidationMessage class="m-2 text-danger" For="() => NewCategory.Name" />
+                        <label>Name</label>                     
+                        <InputText @bind-Value="NewCategory.Name" />
+                    </div>
+                    <button class="m-2 btn btn-info">Submit</button>
+                </EditForm>
+            </div>
+            <div class="col-3"></div>
+        </div>  
+</div>
+
+@code
+{
+    [Parameter]
+    public long BlogId { get; set; }
+
+    private Category[] AllCategories { get; set; } = Array.Empty<Category>();
+
+    private Category[] SelectedCategories { get; set; } = Array.Empty<Category>();
+
+    private Category NewCategory { get; set; } = new Category();
+    private string _createCategoryError = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {      
+        await UpdateListAsync();
+    }
+
+    private async Task UpdateListAsync()
+    {      
+        SelectedCategories = Array.Empty<Category>();           
+        AllCategories = await Http.GetFromJsonAsync<Category[]>("/api/Category/GetAll") ?? Array.Empty<Category>();                       
+    }
+
+    private async Task HandleDelete(long id)
+    {
+        var response = await Http.DeleteAsync($"/api/Category/Delete/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            await UpdateListAsync();
+        }
+        else
+        {
+            string error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Error on Delete {response.StatusCode} - {error}");
+        }
+    }
+    private async Task HandleCreate()
+    {
+        var response = await Http.PostAsJsonAsync("/api/Category/Create", NewCategory);
+        if (response.IsSuccessStatusCode)
+        {
+            // clear name field after creating it
+            NewCategory.Name = string.Empty;
+            await UpdateListAsync();
+        }
+        else
+        {
+            _createCategoryError = await response.Content.ReadAsStringAsync();
+        }
+    }
+
+}

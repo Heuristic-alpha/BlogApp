@@ -1,0 +1,51 @@
+﻿@page
+@model BlogApp.Pages.Account.LoginModel
+@{
+    ViewBag.Title = "Login";
+    Layout = "_HomeLayout";
+}
+
+<partial name="_JqueryValidation" />
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2 class="bg-info text-secondary text-center m-2">Login</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form method="post" asp-page="/account/login" class="text-black" id="frm">
+                <input hidden asp-for="@Model.ReturnUrl" />
+                <div class="bg-light text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="form-control m-2">
+                    <label><b>UserName:</b></label>
+                    <span class="bg-light text-danger" asp-validation-for="UserName"></span>
+                    <input asp-for="UserName" class="input-group-text form-text" />
+                </div>
+                <div class="form-control m-2">
+                    <label><b>Password:</b></label>
+                    <span class="bg-light text-danger" asp-validation-for="Password"></span>
+                    <input asp-for="Password" class="input-group-text form-text" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-4"></div>
+        <div class="col-3 align-self-center">          
+            <a class="btn btn-outline-dark m-2" asp-controller="Home" asp-action="Index">Home</a>
+            <button type="submit" class="btn btn-outline-primary m-2" form="frm">Login</button>
+        </div>
+        <div class="col-4"></div>
+    </div>
+    <div class="row m-3">
+        <div class="col-4"></div>
+        <div class="col-4 list-group align-self-center">
+            <label>If dont have account yet, create new one:</label>
+            <a class="btn btn-outline-primary" asp-page="SignUp">SignUp</a>
+        </div>
+        <div class="col-4"></div>
+    </div>
+
+</div>

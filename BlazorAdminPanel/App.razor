@@ -1,0 +1,48 @@
+﻿@inject NavigationManager Navigation
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" Context="ctx">
+                <Authorizing>
+                    Please wait ...
+                </Authorizing>
+                <NotAuthorized>
+                    @if (ctx.User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <LayoutView Layout="@typeof(AuthLayout)">
+                            <PageTitle>Not Authorized</PageTitle>
+                            <h1 class="bg-danger text-black text-center">You (@ctx.User.Identity.Name) dont have any permissions to visit this page.</h1>
+                        </LayoutView>
+                    }
+                    else
+                    {
+                        Navigation.NavigateTo(AuthServices.LoginPagePath);
+                    }
+
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@* <Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">       
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+ *@

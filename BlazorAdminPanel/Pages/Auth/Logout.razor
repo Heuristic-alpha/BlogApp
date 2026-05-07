@@ -1,0 +1,22 @@
+﻿@page "/auth/logout"
+@layout AuthLayout
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
+
+<div class="m-2 border border-5 border-dark">
+    <h1 class="m-2 bg-dark text-info text-center">Logout</h1>
+    <div class="m-2 text-center">
+        You have been Logout.
+    </div>
+    <div class="m-2 text-center">
+        <button class="btn btn-primary" @onclick="@(()=>Navigation.NavigateTo(AuthServices.LoginPagePath))">Login</button>
+    </div>
+</div>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await ((AuthServices)AuthProvider).LogoutAsync();
+    }
+}

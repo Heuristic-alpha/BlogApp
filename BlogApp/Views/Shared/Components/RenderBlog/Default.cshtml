@@ -1,0 +1,105 @@
+﻿@using BlogApp.Infrastructures
+@using BlogApp.Models
+@using BlogApp.ViewModels
+@using Microsoft.AspNetCore.Identity
+@model Blog
+
+@{
+    IdentityAppUser? identityAppUser = Html.ViewContext.HttpContext.GetIdentityAppUser();
+    string[] lines = Model.BlogContent.Split('\n', StringSplitOptions.None);
+
+    string[] categories = null!;
+    if(TempData.TryGetValue("Categories", out object? value))
+    {
+        categories = (string[])value!;
+    }
+}
+
+@if (@Model == null)
+{
+    <div class="bg-black text-danger">
+        Blog is null
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row m-2">
+            <div class="col-1"></div>
+            <div class="col m-2 bg-secondary bg-opacity-25 border border-2 border-primary">
+                <h2 class="m-2 text-center text-black bg-warning bg-opacity-50">@Model.Title</h2>
+                <div class="m-2 bg-info bg-opacity-25">
+                    Authored by <span class="text-danger">@Model.AppUser?.DisplayName</span> at <span class="text-success">@Model.CreationDateTime.ToString()</span>
+                </div>
+                <div class="m-2 bg-light border border-2 border-secondary">
+                    @foreach (string line in lines)
+                    {
+                        <p class="m-2 text-black">@line</p>
+                    }
+                </div>
+                @if (categories != null && categories.Any())
+                {
+                    <div class="m-2 bg-info bg-opacity-25">
+                        Categories:
+                        @foreach (string cat in categories)
+                        {
+                            <span class="m-2 bg-info text-black text-center border border-1 border-white">@cat</span>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-1"></div>
+        </div>
+        <div class="row m-2">
+            <div class="col-1"></div>
+            <div class="col m-2 bg-success bg-opacity-25 border border-2 border-success">
+                @if(identityAppUser == null)
+                {
+                    <p>- Logined user can post commnts on this blog. </p>
+                    <a class="text-primary" asp-page="/Account/Login">Login</a>
+                }
+                else
+                {
+                    @* Write new comment *@
+                    <label class="m-2 text-primary">New Comment:</label>
+                    <form method="post" asp-controller="CommentOperation" asp-action="AddAndReload">
+                        <input hidden name="BlogId" value="@Model.BlogId" />
+                        <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
+                        <input hidden name="ReturnUrl" value="@GetReturnUrl()" />
+                        <textarea class="m-2 form-control-plaintext input-group-text text-start bg-info bg-opacity-50 text-secondary" name="Text"></textarea>
+                        <button class="btn btn-outline-warning m-2">Add</button>
+                    </form>
+                }
+            </div>
+            <div class="col-1"></div>
+        </div>
+              
+        <div class="row m-2">
+            <div class="col-2"></div>
+            <div class="col m-2 bg-success bg-opacity-25 border border-2 border-success">
+                <h4 class="m-2 text-center text-black bg-primary bg-opacity-50">User Comments</h4>
+                @if (Model.Comments != null && Model.Comments.Any())
+                {
+                    @foreach (var c in Model.Comments)
+                    {
+                        <vc:render-comment comment="c" can-add-like="true" />        
+                    }
+                }
+                else
+                {
+                    <p>- No comment yet.</p>
+                }
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+}
+
+@functions
+{
+    public string GetReturnUrl()
+    {
+        HttpRequest httpRequest = Html.ViewContext.HttpContext.Request;
+        return Url.Content(httpRequest.Path.ToUriComponent() + httpRequest.QueryString.ToString());
+    }
+}

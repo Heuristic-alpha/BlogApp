@@ -1,0 +1,59 @@
+﻿@typeparam ItemT
+@typeparam PropertyT
+
+<button class="btn" @onclick="OnClick">
+    <span>
+        <b>
+            @ChildContent
+        </b>
+        <img alt="arrow" src="@GetImageSource()" />
+    </span>
+   
+</button>
+
+
+@code {
+
+    [Parameter, EditorRequired]
+    public ItemT[] Values { get; set; }
+    [Parameter, EditorRequired]
+    public EventCallback<ItemT[]> ValuesChanged { get; set; }
+
+    [Parameter,EditorRequired]
+    public Func<ItemT, PropertyT> Selector { get; set; }
+
+    [Parameter]
+    public IComparer<PropertyT>? Comparer { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool _IsAcending = true;
+
+    private void OnClick()
+    {
+        _IsAcending = !_IsAcending;
+
+        if (_IsAcending)
+        {           
+            Values = Comparer != null ? Values.OrderBy(Selector, Comparer).ToArray() : Values.OrderBy(Selector).ToArray();
+        }
+        else
+        {
+            Values = Comparer != null ? Values.OrderByDescending(Selector, Comparer).ToArray() : Values.OrderByDescending(Selector).ToArray();
+        }
+        ValuesChanged.InvokeAsync(Values);
+    }
+
+    private string GetTextColor()
+    {
+        if (_IsAcending) return "text-success";
+        else return "text-danger";
+    }
+
+    private string GetImageSource()
+    {
+        if (_IsAcending) return "images/static/small-arrow-down.png";
+        else return "images/static/small-arrow-up.png";
+    }
+}

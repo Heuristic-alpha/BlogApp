@@ -1,0 +1,13 @@
+﻿@page "{id:int?}"
+@model BlogApp.Pages.ErrorModel
+@{
+    ViewBag.Title = "Error";
+    Layout = "_HomeLayout";
+}
+<div class="container p-2">
+    <div class="row">
+        <h1 class="col-12 bg-danger text-black text-center">
+            Http error (@(Model.Id == 0 ? string.Empty : Model.Id)) has been accured. (@(Model.ErrorMessage?.ToString() ?? string.Empty))
+        </h1>      
+    </div>
+</div>

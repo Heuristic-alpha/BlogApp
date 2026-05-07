@@ -1,0 +1,10 @@
+﻿@page "/"
+@attribute [Authorize(Roles = Constants.Roles.Admins)]
+
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Home</PageTitle>
+
+<h1 class="m-2 text-center mb-3">Welcome <b class="text-danger">@((AuthStateProvider as AuthServices)?.User.Identity?.Name)</b></h1>
+
+

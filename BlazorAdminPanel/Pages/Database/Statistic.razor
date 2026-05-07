@@ -1,0 +1,73 @@
+﻿@page "/database/statistic"
+@attribute [Authorize(Roles = Constants.Roles.Admins)]
+
+<PageTitle>Database Statistic</PageTitle>
+<h1 class="bg-info text-black text-black text-center m-2">Database Statistic</h1>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-4 m-2">
+            <table class="table table-bordered table-hover table-info">
+                <thead>
+                    <tr class="text-center">
+                        <th>Table</th>
+                        <th>Total Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center">
+                        <td>Identity Users</td>
+                        <td>@dataBaseStatistic?.IdentityAppUserCount</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td>App Users</td>
+                        <td>@dataBaseStatistic?.AppUsersCount</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td>Blogs</td>
+                        <td>@dataBaseStatistic?.BlogsCount</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td>Comments</td>
+                        <td>@dataBaseStatistic?.CommentsCount</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td>Categories</td>
+                        <td>@dataBaseStatistic?.CategoriesCount</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td>AppUserComments</td>
+                        <td>@dataBaseStatistic?.AppUserCommentsCount</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td>BlogCategories</td>
+                        <td>@dataBaseStatistic?.BlogCategoriesCount</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6 m-2">
+            
+        </div>
+    </div>  
+</div>
+
+@code
+{
+    [Inject]
+    public HttpClient? Http { get; set; }
+
+    public DataBaseStatisticDto? dataBaseStatistic { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateDataAsync();
+    }
+
+    private async Task UpdateDataAsync()
+    {
+        if (Http == null) return;
+        dataBaseStatistic = await Http.GetFromJsonAsync<DataBaseStatisticDto>("/api/App/GetDatabaseStatistic");
+    }
+}

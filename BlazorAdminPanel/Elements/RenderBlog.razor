@@ -1,0 +1,56 @@
+﻿@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<div class="container border border-primary m-1 bg-secondary">
+    <div class="row m-2">
+        @* Blog Title *@
+        <label class="col col-form-label text-light bg-warning bg-opacity-25">
+            @Blog.Title
+        </label>
+        @* Blog User *@
+        <span class="col">
+            <label class="text-warning m-2">
+                by @(Blog.AppUser?.DisplayName ?? "Debug: AppUser is null")
+            </label>
+            <a class="text-info m-2" @onclick="@(() => Navigation.NavigateTo($"user/details/{Blog.AppUserId}"))">user details</a>
+            <a class="text-info m-2" @onclick="@(() => Navigation.NavigateTo($"blog/details/{Blog.BlogId}"))">blog details</a>
+        </span>
+        
+    </div>
+    <div class="row m-2">
+        @* Blog Content *@
+        <div class="col">
+            <textarea readonly class="form-control-plaintext input-group-text text-start text-black" @bind="@Blog.BlogContent"></textarea>
+        </div>
+    </div>
+    <div class="row m-4">
+        <a class="text-info" @onclick="@(async() =>await LoadComments(Blog.BlogId))">Click to load comments</a>
+    </div>
+    <div class="row m-2">
+        @* Show others comments *@
+        <div class="col">
+            @if (Blog.Comments != null && Blog.Comments.Any()) // has comments
+            {
+                @foreach (var comment in Blog.Comments)
+                {
+                    <RenderComment Comment="comment"/>
+                }
+            }
+            else // no comments
+            {
+                <label>No Comments yet</label>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public Blog Blog { get; set; }
+
+    public async Task LoadComments(long id)
+    {
+        Blog.Comments = await Http.GetFromJsonAsync<Comment[]>($"/api/Comment/GetAllForBlog/{id}") ?? Array.Empty<Comment>();
+    }
+}

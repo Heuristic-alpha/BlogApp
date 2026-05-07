@@ -1,0 +1,68 @@
+﻿@inject NavigationManager Navigation
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand text-info" @onclick="@(() => Navigation.NavigateTo(""))">Admin Panel</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <a class="nav-link" href="http://localhost:5000">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Site
+            </a>
+        </div>
+       @*  <div class="nav-item px-3">
+            <a class="nav-link" @onclick="@(()=>Navigation.NavigateTo(""))">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </a>
+        </div> *@
+        <div class="nav-item px-3">
+            <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("database/statistic"))">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Database Statistic
+            </a>
+        </div>
+        <div class="nav-item px-3">
+            <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("user/list"))">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> User list
+            </a>
+        </div>
+        <div class="nav-item px-3">
+            <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("blog/list"))">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Blog list
+            </a>
+        </div>
+        <div class="nav-item px-3">
+            <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("comment/list"))">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Comment list
+            </a>
+        </div>
+        <div class="nav-item px-3">
+            <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("category/list"))">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Category list
+            </a>
+        </div>
+    </nav>
+</div>
+
+<div class="down-row">
+    <RealTimeWatch UpdateInterval="500" class="bg-dark text-center text-warning" />
+</div>
+
+@code {
+    [Inject]
+    public HttpClient? Http { get; set; }
+
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

@@ -1,0 +1,146 @@
+﻿@page "/blog/list"
+@page "/blog/list/{id:long}"
+@attribute [Authorize(Roles = Constants.Roles.Admins)]
+
+@using System.Globalization
+@using BlazorAdminPanel
+@using BlazorAdminPanel.Elements
+@using BlazorAdminPanel.Gadgets
+@using BlazorAdminPanel.Layout
+@using BlazorAdminPanel.Services
+@using BlogApp.Models
+@using BlogApp.Models.DataModels
+@using BlogApp.Models.JoinModels
+@using BlogApp.Services
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject JsonSerializerOptions JSO
+
+<PageTitle>Blog list (@listType?.Value)</PageTitle>
+<h1 class="bg-secondary text-white text-center">Blog list (@(listType!.Value == ListType.ForUser ? $"for user:Id={Id}" : "Global"))</h1>
+@if(listType!.Value == ListType.Global)
+{
+    <BlogSearchBox OnClick="async (bs) => { _blogSearch = bs; await UpdateListAsync(); }" />
+}
+<div class="container-md">
+    <div class="row row-cols-md-1 bg-light">
+        <table class="table table-bordered table-hover border border-2 border-dark">
+            <thead>
+                <tr class="fa-bold">
+                    <th><SortArrayButton ItemT="Blog" PropertyT="long" @bind-Values="@SelectedBlogs" Selector="(t) => t.BlogId">Id</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Blog" PropertyT="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.AppUser?.DisplayName" Comparer="StringComparer.OrdinalIgnoreCase">User</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Blog" PropertyT="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.Title" Comparer="StringComparer.OrdinalIgnoreCase">Title</SortArrayButton></th>
+                    <th>Content</th>
+                    <th><SortArrayButton ItemT="Blog" PropertyT="bool" @bind-Values="@SelectedBlogs" Selector="(t) => t.IsConfirmed">Is Confirmed?</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Blog" PropertyT="bool" @bind-Values="@SelectedBlogs" Selector="(t) => t.IsPublic">Is Public?</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Blog" PropertyT="DateTime" @bind-Values="@SelectedBlogs" Selector="(t) => t.CreationDateTime">Creation Date</SortArrayButton></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (SelectedBlogs.Length != 0)
+                    @for (int i = 0; i < SelectedBlogs.Length; i++)
+                    {
+                        long localI = i;
+                        Blog blog = SelectedBlogs[localI];
+                        <tr>
+                            <td>@blog.BlogId</td>
+                            <td>@blog.AppUser?.DisplayName</td>
+                            <td>@blog.Title</td>
+                            <td>@(blog.BlogContent.Length > MAX_CONTENT_LENGTH ? blog.BlogContent[0..MAX_CONTENT_LENGTH] + " ..." : blog.BlogContent)</td>
+                            <td class="text-center text-@GetBooleanColor(blog.IsConfirmed)">@blog.IsConfirmed</td>
+                            <td class="text-center text-@GetBooleanColor(blog.IsPublic)">@blog.IsPublic</td>
+                            <td>@blog.CreationDateTime.ToString(CultureInfo.InvariantCulture)</td>
+                            <td>
+                                <button class="btn btn-outline-danger" @onclick="async () => await HandleDelete(blog.BlogId)">Delete</button>
+                                <a class="btn btn-outline-success m-1" @onclick="@(() => Navigation.NavigateTo($"blog/edit/{blog.BlogId}"))">Edit</a>
+                                <a class="btn btn-outline-info m-1" @onclick="@(() => Navigation.NavigateTo($"blog/details/{blog.BlogId}"))">Details</a>
+                            </td>
+                        </tr>
+                    }
+                else
+                {
+                    <tr><td class="text-center text-danger">List is empty</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row bg-white align-items-center m-2">
+        <div class="col"></div>
+        <div class="col-auto"><Paginate ItemType="Blog" @bind-AllItems="@AllBlogs" @bind-CurrentItems="@SelectedBlogs" /></div>
+        <div class="col"></div>
+    </div>
+    @if(listType?.Value == ListType.Global)
+    {
+        <div class="row bg-white align-items-center m-2">
+            <div class="col-4"></div>
+            <div class="col m-2"><a class="btn btn-outline-primary" @onclick="@(() => Navigation.NavigateTo("blog/create"))">Create new Blog</a></div>
+            <div class="col-4"></div>
+        </div>
+    }  
+</div>
+
+@code
+{
+    public enum ListType
+    {
+        Global,
+        ForUser
+    }
+
+    public const int MAX_CONTENT_LENGTH = 40;
+
+    [Parameter]
+    public Blog[] AllBlogs { get; set; } = Array.Empty<Blog>();
+
+    public Blog[] SelectedBlogs { get; set; } = Array.Empty<Blog>();
+
+    [Parameter]
+    public long Id { get; set; } // This Id is AppUserId
+
+    public Lazy<ListType>? listType { get; set; }
+
+    private BlogSearch _blogSearch = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        listType = new Lazy<ListType>(() => Id == default ? ListType.Global : ListType.ForUser);
+
+        if (listType.Value == ListType.ForUser)
+        {
+            AllBlogs = await Http.GetFromJsonAsync<Blog[]>($"/api/Blog/GetAllForUser/{Id}") ?? Array.Empty<Blog>();
+        }
+    }
+
+    private async Task UpdateListAsync()
+    {
+        if (listType == null) return;
+
+        SelectedBlogs = Array.Empty<Blog>();
+        if (listType.Value == ListType.Global)
+        {
+            var response = await Http.PostAsJsonAsync<BlogSearch>("/api/Blog/GetAll", _blogSearch);
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                AllBlogs = JsonSerializer.Deserialize<Blog[]>(json, JSO) ?? Array.Empty<Blog>();
+            }
+        }
+        else if (listType.Value == ListType.ForUser)
+        {
+            AllBlogs = await Http.GetFromJsonAsync<Blog[]>($"/api/Blog/GetAllForUser/{Id}") ?? Array.Empty<Blog>();
+        }       
+    }
+
+    private async Task HandleDelete(long id)
+    {
+        var response = await Http.DeleteAsync($"/api/Blog/Delete/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            await UpdateListAsync();
+        }
+        else throw new Exception($"Error on Delete {response.StatusCode} \n{await response.Content.ReadAsStringAsync()}");
+    }
+
+    private string GetBooleanColor(bool isTrue) => isTrue ? "success" : "danger";
+}

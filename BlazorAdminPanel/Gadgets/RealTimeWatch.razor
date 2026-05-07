@@ -1,0 +1,51 @@
+﻿@using System.Globalization
+@using BlazorAdminPanel
+@using BlazorAdminPanel.Elements
+@using BlazorAdminPanel.Gadgets
+@using BlazorAdminPanel.Layout
+@using BlazorAdminPanel.Services
+@using BlogApp.Models
+@using BlogApp.Models.DataModels
+@using BlogApp.Models.JoinModels
+@using BlogApp.Services
+@implements IDisposable
+
+<div @attributes="@AdditionalAttributes">
+    @DateTime.ToString(Format, CultureInfo.InvariantCulture)
+</div>
+
+
+@code 
+{
+    [Parameter]
+    public int UpdateInterval { get; set; } = 1000;
+
+    [Parameter]
+    public string Format { get; set; } = CultureInfo.InvariantCulture.DateTimeFormat.FullDateTimePattern;
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    public DateTime DateTime { get; set; } = DateTime.Now;
+
+    private CancellationTokenSource _tokenSource = new();
+
+#pragma warning disable CS1998, CS4014
+    protected override async Task OnInitializedAsync() => StartUpdateAsync(_tokenSource.Token);
+#pragma warning restore CS1998, CS4014
+
+    private async Task StartUpdateAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            await Task.Delay(UpdateInterval);
+            DateTime = DateTime.Now;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        _tokenSource.Dispose();
+    }
+}

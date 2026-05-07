@@ -1,0 +1,15 @@
+﻿@page
+@{
+    ViewBag.Title = "Account is created";
+    Layout = "_HomeLayout";
+}
+
+<div class="container">
+    <h1 class="bg-success text-light text-center">Congrats ! your account created successfully</h1>
+    <h4 class="bg-light text-black text-center">Now Login to your account using this button:</h4>
+   <div class="row m-4">
+       <div class="col-5"></div>
+       <div class="col"><a asp-page="/Account/Login" class="btn btn-success">Login</a></div>
+       <div class="col-5"></div>
+   </div> 
+</div>

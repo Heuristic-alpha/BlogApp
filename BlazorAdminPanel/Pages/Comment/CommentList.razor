@@ -1,0 +1,189 @@
+﻿@page "/comment/list"
+@page "/comment/list/forblog/{blogId:long}"
+@page "/comment/list/forUser/{userId:long}"
+@attribute [Authorize(Roles = Constants.Roles.Admins)]
+
+@using System.Globalization
+
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject JsonSerializerOptions JSO
+
+<PageTitle>Comment list (@listType!.Value.ToString())</PageTitle>
+@if (listType!.Value == ListType.Global)
+{
+    <h1 class="bg-secondary text-white text-center">Comment list (Global)</h1>   
+    <CommentSearchBox OnClick="async (cs) => { _commentSearch = cs; await UpdateListAsync(); }" />   
+}
+else if (listType.Value == ListType.ForBlog)
+{
+    <h1 class="bg-secondary text-white text-center">Comment list (@($"for blog: Id={BlogId}"))</h1>
+}
+else if (listType.Value == ListType.ForUser)
+{
+    <h1 class="bg-secondary text-white text-center">Comment list (@($"for user: Id={UserId}"))</h1>
+}
+<div class="container-md">
+    <div class="row row-cols-md-1 bg-light">
+        <table class="table table-bordered table-hover border border-2 border-dark">
+            <thead>
+                <tr class="fa-bold">
+                    <th><SortArrayButton ItemT="Comment" PropertyT="long" @bind-Values="@SelectedComments" Selector="(Comment c) => c.CommentId">Id</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Comment" PropertyT="string" @bind-Values="@SelectedComments" Selector="(Comment c) => c.AppUser!.DisplayName">User</SortArrayButton></th>
+                    <th>Content</th>
+                    <th><SortArrayButton ItemT="Comment" PropertyT="bool" @bind-Values="@SelectedComments" Selector="(Comment c) => c.IsConfirmed">Is Confirmed?</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Comment" PropertyT="int" @bind-Values="@SelectedComments" Selector="(Comment c) => c.Like">Likes</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Comment" PropertyT="int" @bind-Values="@SelectedComments" Selector="(Comment c) => c.Dislike">Dislikes</SortArrayButton></th>
+                    <th><SortArrayButton ItemT="Comment" PropertyT="DateTime" @bind-Values="@SelectedComments" Selector="(Comment c) => c.CreationDateTime">Creation Date</SortArrayButton></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (SelectedComments.Length != 0)
+                    @for (int i = 0; i < SelectedComments.Length; i++)
+                    {
+                        long localI = i;
+                        Comment comment = SelectedComments[localI];
+                        <tr>
+                            <td>@comment.CommentId</td>
+                            <td>@(comment.AppUser?.DisplayName ?? "Null")</td>
+                            <td>@(comment.StringContent.Length > MAX_CONTENT_LENGTH ? comment.StringContent[0..MAX_CONTENT_LENGTH] + " ..." : comment.StringContent)</td>
+                            <td class="align-self-center text-center text-@GetBoolColor(comment.IsConfirmed)">@comment.IsConfirmed</td>
+                            <td class="align-self-center text-success">@comment.Like</td>
+                            <td class="align-self-center text-danger">@comment.Dislike</td>
+                            <td>@comment.CreationDateTime.ToString(CultureInfo.InvariantCulture)</td>
+                            <td>
+                                <button class="btn btn-outline-danger" @onclick="async () => await HandleDelete(comment.CommentId)">Delete</button>
+                                <a class="btn btn-outline-success m-1" @onclick="@(() => Navigation.NavigateTo($"comment/edit/{comment.CommentId}"))">Edit</a>
+                                <a class="btn btn-outline-info m-1" @onclick="@(() => Navigation.NavigateTo($"comment/details/{comment.CommentId}"))">Details</a>
+                            </td>
+                        </tr>
+                    }
+                else
+                {
+                    <tr><td class="text-center text-danger">List is empty</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row bg-white align-items-center m-2">
+        <div class="col"></div>
+        <div class="col-auto"><Paginate ItemType="Comment" @bind-AllItems="@AllComments" @bind-CurrentItems="@SelectedComments" /></div>
+        <div class="col"></div>
+    </div>
+    @if (listType!.Value == ListType.Global || listType!.Value == ListType.ForBlog)
+    {
+        <div class="row bg-white align-items-center m-2">
+            <div class="col-4"></div>
+            <div class="col m-2">
+                <a class="btn btn-outline-primary" @onclick="@(() => Navigation.NavigateTo(GetCreateUrl()))">Create new Comment (@listType.Value.ToString())</a>
+            </div>
+            <div class="col-4"></div>
+        </div>
+    }    
+</div>
+
+@code
+{
+    public enum ListType
+    {
+        Global,
+        ForBlog,
+        ForUser
+    }
+
+    public const int MAX_CONTENT_LENGTH = 40;
+
+    [Inject]
+    public ILogger<CommentList>? Logger { get; set; }
+
+    [Parameter]
+    public long BlogId { get; set; }
+
+    [Parameter]
+    public long UserId { get; set; }
+
+    public Lazy<ListType>? listType { get; set; }
+
+    private Comment[] AllComments { get; set; } = Array.Empty<Comment>();
+
+    private Comment[] SelectedComments { get; set; } = Array.Empty<Comment>();
+
+    private CommentSearch _commentSearch = new();
+
+    protected override async Task OnInitializedAsync()
+    {      
+        listType = new Lazy<ListType>(() =>
+        {
+            if (BlogId == default && UserId == default) return ListType.Global;
+            else if (BlogId != default) return ListType.ForBlog;
+            else return ListType.ForUser;
+        });
+        
+        if (listType.Value == ListType.ForBlog)
+        {
+            AllComments = await Http.GetFromJsonAsync<Comment[]>($"/api/Comment/GetAllForBlog/{BlogId}") ?? Array.Empty<Comment>();
+        }
+        else if (listType.Value == ListType.ForUser)
+        {
+            AllComments = await Http.GetFromJsonAsync<Comment[]>($"/api/Comment/GetAllForUser/{UserId}") ?? Array.Empty<Comment>();
+        }
+    }
+
+    private async Task UpdateListAsync()
+    {
+        if (Http != null && listType != null)
+        {
+            SelectedComments = Array.Empty<Comment>();
+            if (listType.Value == ListType.Global)
+            {              
+                var response = await Http.PostAsJsonAsync<CommentSearch>("/api/Comment/GetAll", _commentSearch);
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    AllComments = JsonSerializer.Deserialize<Comment[]>(json, JSO) ?? Array.Empty<Comment>();
+                }
+            }
+            else if (listType.Value == ListType.ForBlog)
+            {
+                AllComments = await Http.GetFromJsonAsync<Comment[]>($"/api/Comment/GetAllForBlog/{BlogId}") ?? Array.Empty<Comment>();
+            }
+            else if (listType.Value == ListType.ForUser)
+            {
+                AllComments = await Http.GetFromJsonAsync<Comment[]>($"/api/Comment/GetAllForUser/{UserId}") ?? Array.Empty<Comment>();
+            }          
+        }
+    }
+
+    private async Task HandleDelete(long id)
+    {     
+        if (Http != null)
+        {
+            var response = await Http.DeleteAsync($"/api/Comment/Delete/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                await UpdateListAsync();
+            }
+            else throw new Exception($"Error on Delete {response.StatusCode} - {response.Content}");
+        }
+    }
+
+    private string GetCreateUrl() 
+    {
+        if (listType!.Value == ListType.Global)
+        {
+            return "comment/create";
+        }
+        else if (listType.Value == ListType.ForBlog)
+        {
+            return $"comment/create/{BlogId}";
+        }
+        else if (listType.Value == ListType.ForUser)
+        {
+            throw new NotImplementedException("Commentlist-GetCreateUrl(): Please implement this func soon");
+        }
+        else throw new NotImplementedException("Commentlist-GetCreateUrl(): Please implement this func soon");
+    }
+
+    private string GetBoolColor(bool isTrue) => isTrue ? "success" : "danger";
+}

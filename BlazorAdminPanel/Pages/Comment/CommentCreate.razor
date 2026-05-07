@@ -1,0 +1,100 @@
+﻿@page "/comment/create"
+@page "/comment/create/{id:long}"
+
+<PageTitle>Create Comment</PageTitle>
+<h1 class="bg-warning text-black text-center">Create Comment (@Mode.ToString())</h1>
+
+<EditForm Model="@Comment" OnValidSubmit="async () => await HandleSubmit()">
+    <DataAnnotationsValidator />
+    
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Id</label>
+        <InputNumber class="m-2 form-control" @bind-Value="@Comment.CommentId" readonly />
+    </div>   
+    <div class="m-2 border border-2 border-info">
+        <span>
+            <label class="form-label m-2">Content</label>
+            <ValidationMessage For="() => Comment.StringContent" />
+        </span>
+        <InputTextArea class="form-control m-2" @bind-Value="@Comment.StringContent" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Is Confirmed?</label>
+        <ValidationMessage For="() => Comment.IsConfirmed" />
+        <InputCheckbox class="m-2" @bind-Value="@Comment.IsConfirmed" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Blog Id</label>
+        <ValidationMessage For="() => Comment.BlogId" />
+        <InputNumber class="m-2 form-control" @bind-Value="@Comment.BlogId" />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">AppUser Id (User who will owned this comment, IT IS DIRTY TO CREATE COMMENT AS OTHER USERS)</label>
+        <ValidationMessage For="() => Comment.AppUserId" />
+        <InputNumber class="form-control m-2" @bind-Value="@Comment.AppUserId" />
+    </div>        
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Creation Date</label>
+        <ValidationMessage For="() => Comment.CreationDateTime" />
+        <InputDate class="form-control m-2" @bind-Value="@Comment.CreationDateTime" />
+    </div>
+    <div class="form-group m-5">
+        @if (Mode == CreatingType.Globaly)
+        {
+            <button type="submit" class="btn btn-primary">Create @Mode.ToString()</button>
+        }
+        else if (Mode == CreatingType.ForBlog)
+        {
+            <button type="submit" class="btn btn-warning">Create @Mode.ToString()</button>
+        }
+    </div>
+</EditForm>
+
+@code
+{
+    public enum CreatingType
+    {
+        Globaly,
+        ForBlog
+    }
+
+    [Inject]
+    public HttpClient? Http { get; set; }
+
+    [Inject]
+    public NavigationManager? Navigation { get; set; }
+
+    [Inject]
+    public IJSRuntime? JSRuntime { get; set; }
+
+    [Parameter]
+    public long Id { get; set; } // this Id is the BlogId we want add comment, if it is 0 then comment is created globaly.
+
+    public Comment Comment { get; set; } = new ();
+
+    public CreatingType Mode => Id == 0 ? CreatingType.Globaly : CreatingType.ForBlog;
+
+    protected override void OnParametersSet()
+    {
+        Comment.BlogId = Id;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Http == null) return;
+
+        var response = await Http.PostAsJsonAsync<Comment>("/api/Comment/Create", Comment);
+        if (response.IsSuccessStatusCode)
+        {
+            if (Mode == CreatingType.Globaly)
+                Navigation?.NavigateTo("comment/list");
+            else if(Mode == CreatingType.ForBlog)
+                Navigation?.NavigateTo($"comment/list/forblog/{Id}");
+        }
+        else
+        {
+            JSRuntime?.InvokeVoidAsync("alert",await response.Content.ReadAsStringAsync());
+        }
+    }
+
+}

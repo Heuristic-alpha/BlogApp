@@ -1,0 +1,117 @@
+﻿@page "/user/details/{id:long}"
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>User Details</PageTitle>
+<h1 class="bg-info text-black text-center">User Details</h1>
+
+<EditForm Model="@UserDetailsDto">
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">AppUserId</label>
+        <InputNumber class="m-2 form-control" @bind-Value="@UserDetailsDto.AppUserId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">IdentityAppUserId</label>
+        <InputText class="m-2 form-control" @bind-Value="@UserDetailsDto.IdentityAppUserId" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Email</label>
+        <InputText class="m-2 form-control" @bind-Value="@UserDetailsDto.Email" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">        
+        <label class="form-label m-2">UserName</label>                   
+        <InputText class="form-control m-2" @bind-Value="@UserDetailsDto.UserName" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">      
+        <label class="form-label m-2">Description</label>         
+        <InputTextArea class="form-control m-2" @bind-Value="@UserDetailsDto.Description" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Gender</label>
+        <InputSelect class="form-select m-2" TValue="bool" @bind-Value="@UserDetailsDto.IsMale" disabled>
+            <ChildContent>
+                <option value="true">Male</option>
+                <option value="false">Female</option>
+            </ChildContent>
+        </InputSelect>
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Creation Date</label>
+        <InputDate class="form-control m-2" @bind-Value="@UserDetailsDto.CreationDateTime" readonly />
+    </div>
+    <div class="m-2 border border-2 border-info">
+        <label class="form-label m-2">Roles:</label>
+        @if (UserDetailsDto.RolesDict != null)
+        {
+            @foreach (KeyValuePair<string, bool> keyValuePair in UserDetailsDto.RolesDict)
+            {
+                string key = keyValuePair.Key;
+                bool val = keyValuePair.Value;
+                <div class="m-2">
+                    <span>
+                        <label class="form-label text-secondary">@key</label>
+                        <input type="checkbox" checked="@val" disabled />
+                    </span>
+                </div>
+            }
+        }
+    </div>
+    <div class="m-2 border border-2 border-success">
+        <h3 class="m-2 bg-success text-white text-center">User Blogs</h3>
+        <button class="m-2 btn btn-info text-black" @onclick="@(() => Navigation.NavigateTo($"blog/list/{Id}"))">GoTo User Blog list</button>
+        <button class="m-2 btn btn-warning text-black" @onclick="@(async () => UserBlogs = await Http.GetFromJsonAsync<Blog[]>($"/api/Blog/GetAllForUser/{Id}") ?? Array.Empty<Blog>())">Click to load</button>
+        <div class="m-2">
+            @if(UserBlogs.Length != 0)
+            {                
+                @for (int i = 0; i < UserBlogs.Length; i++)
+                {
+                    <div class="m-2">
+                        <RenderBlog Blog="@UserBlogs[i]" />
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-danger">Empty</p>
+            }
+        </div>
+    </div>
+    <div class="m-2 border border-2 border-success">
+        <h3 class="m-2 bg-success text-white text-center">User Comments</h3>
+        <button class="m-2 btn btn-info text-black" @onclick="@(() => Navigation.NavigateTo($"comment/list/foruser/{Id}"))">GoTo User Comment list</button>
+        <button class="m-2 btn btn-warning text-black" @onclick="@(async () => UserComments = await Http.GetFromJsonAsync<Comment[]>($"/api/Comment/GetAllForUser/{Id}") ?? Array.Empty<Comment>())">Click to load</button>
+        <div class="m-2">
+            @if (UserComments.Length != 0)
+            {
+                @for (int i = 0; i < UserComments.Length; i++)
+                {
+                    <div class="m-2">
+                        <RenderComment Comment="@UserComments[i]" />
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-danger">Empty</p>
+            }
+        </div>
+    </div>
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public long Id { get; set; }
+
+    public UserDetailsDto UserDetailsDto { get; set; } = new UserDetailsDto();
+
+    public Blog[] UserBlogs { get; set; } = Array.Empty<Blog>();
+    public Comment[] UserComments { get; set; } = Array.Empty<Comment>();
+
+    protected override async Task OnParametersSetAsync()
+    {      
+        UserDetailsDto? udd = await Http.GetFromJsonAsync<UserDetailsDto>($"/api/AppUser/Get/{Id}");
+        if (udd != null) UserDetailsDto = udd;       
+    }   
+}

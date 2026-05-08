@@ -39,9 +39,11 @@
                             <td class="text-success">@(string.Join(", ",userDetails.RolesDict?.Where(kvp => kvp.Value == true).Select(kvp => kvp.Key) ?? Enumerable.Empty<string>()))</td>
                             <td>@userDetails.CreationDateTime.ToString(CultureInfo.InvariantCulture)</td>
                             <td>
-                                <button class="btn btn-outline-danger m-1" @onclick="async () => await HandleDelete(userDetails.AppUserId)">Delete</button>
-                                <button class="btn btn-outline-success m-1" @onclick="@(() => Navigation.NavigateTo($"user/edit/{userDetails.AppUserId}"))">Edit</button>
                                 <button class="btn btn-outline-info m-1" @onclick="@(() => Navigation.NavigateTo($"user/details/{userDetails.AppUserId}"))">Details</button>
+                                <AuthorizeView Roles="@Constants.Roles.Manager">
+                                    <button class="btn btn-outline-danger m-1" @onclick="async () => await HandleDelete(userDetails.AppUserId)">Delete</button>
+                                    <button class="btn btn-outline-success m-1" @onclick="@(() => Navigation.NavigateTo($"user/edit/{userDetails.AppUserId}"))">Edit</button>
+                                </AuthorizeView>                              
                             </td>
                         </tr>
                     }
@@ -57,11 +59,13 @@
         <div class="col-auto"><Paginate ItemType="UserDetailsDto" @bind-AllItems="@AllAppUsers" @bind-CurrentItems="@SelectedAppUsers" /></div>
         <div class="col"></div>
     </div>
-    <div class="row bg-white align-items-center m-2">
-        <div class="col-5"></div>
-        <div class="col m-2"><a class="btn btn-outline-primary" @onclick="@(() => Navigation.NavigateTo("user/create"))">Create new User</a></div>
-        <div class="col-5"></div>
-    </div>
+     <AuthorizeView Roles="@Constants.Roles.Manager">
+        <div class="row bg-white align-items-center m-2">
+            <div class="col-5"></div>
+            <div class="col m-2"><a class="btn btn-outline-primary" @onclick="@(() => Navigation.NavigateTo("user/create"))">Create new User</a></div>
+            <div class="col-5"></div>
+        </div>
+    </AuthorizeView>
 </div>
 
 @code

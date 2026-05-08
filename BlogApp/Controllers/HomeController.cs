@@ -41,9 +41,9 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> BlogListPublicView([FromQuery] int size = 10, [FromQuery] int page = 1)
         {
             var allUserBlogsQuery = _dataDbContext.Blogs.AsNoTracking()
-                                                        .Include(b => b.AppUser)
-                                                        .Include(b => b.BlogCategories!)
-                                                        .ThenInclude(bc => bc.Category)
+                                                     // .Include(b => b.AppUser)
+                                                     // .Include(b => b.BlogCategories!)
+                                                     // .ThenInclude(bc => bc.Category)
                                                         .Where(b => b.IsConfirmed == true && b.IsPublic == true)
                                                         .Select(b => new PublicBlog()
                                                         {

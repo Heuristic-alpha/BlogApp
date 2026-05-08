@@ -14,6 +14,7 @@
         <div class="col m-2 bg-info bg-opacity-25 border border-2 border-primary">
             @foreach (PublicBlog pb in Model.SelectedItems)
             {
+                <div class="m-5"> @*Blank*@ </div>
                 <div class="m-2 bg-warning bg-opacity-25 border border-2 border-dark">
                     <h5 class="m-2 bg-warning bg-opacity-75 text-black text-center">@pb.Title</h5>
                     @if (pb.Categories != null && pb.Categories.Any())
@@ -33,8 +34,9 @@
                     </div>
                     <div class="m-2 align-content-center">
                         <a class="m-2 btn btn-info" asp-action="BlogPublicView" asp-route-id="@pb.BlogId" asp-route-returnUrl="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()">Read</a>
-                    </div>                    
+                    </div>
                 </div>
+                <div class="m-5"> @*Blank*@ </div>
             }
         </div>
         <div class="col-1"></div>

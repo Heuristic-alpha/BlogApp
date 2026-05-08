@@ -9,24 +9,24 @@
             }
             @if (CurrentPage != 1)
             {
-                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(1)">@("<<")</button>
+                <button class="btn m-2 text-danger" @onclick="() => SetCurrentPageAndUpdateAsync(1)">@("<<")</button>
             }
             @if (HasPrevPage)
             {
-                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(CurrentPage - 1)">@("<")</button>
+                <button class="btn m-2 text-danger" @onclick="() => SetCurrentPageAndUpdateAsync(CurrentPage - 1)">@("<")</button>
             }
             @for (int i = 1; i <= totalPage; i++)
             {
                 int localIndex = i;
-                <button class="btn m-1 text-@(CurrentPage == i ? "black" : "white")" @onclick="() => SetCurrentPageAndUpdateAsync(localIndex)">@i</button>
+                <button class="btn m-1 text-@(CurrentPage == i ? "black" : "primary")" @onclick="() => SetCurrentPageAndUpdateAsync(localIndex)">@i</button>
             }
             @if (HasNextPage)
             {
-                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(CurrentPage + 1)">@(">")</button>
+                <button class="btn m-2 text-danger" @onclick="() => SetCurrentPageAndUpdateAsync(CurrentPage + 1)">@(">")</button>
             }
             @if (CurrentPage != totalPage)
             {
-                <button class="btn m-2 text-warning" @onclick="() => SetCurrentPageAndUpdateAsync(totalPage)">@(">>")</button>
+                <button class="btn m-2 text-danger" @onclick="() => SetCurrentPageAndUpdateAsync(totalPage)">@(">>")</button>
             }
             <select class="m-2 bg-black text-light border border-1 border-danger" @onchange="SizeChangedHandler">
                 <option value="1">1</option>

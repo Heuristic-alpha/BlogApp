@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>wwwroot\images\static\AppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <NuGetAudit>False</NuGetAudit>
   </PropertyGroup>
 
@@ -13,6 +13,10 @@
     <Content Remove="wwwroot\games\**" />
     <EmbeddedResource Remove="wwwroot\games\**" />
     <None Remove="wwwroot\games\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="AppIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>

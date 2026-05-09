@@ -1,0 +1,23 @@
+﻿@page "{id:long}"
+@model BlogApp.Pages.Profile.ViewModel
+@{
+    ViewBag.Title = "Profile View";
+    Layout = "_HomeLayout";
+}
+
+<div class="m-2 bg-info bg-opacity-25 border border-4 border-info">
+    <h1 class="m-2 bg-info text-black text-center">User Profile</h1>
+    <div class="m-2">
+                         
+            <div class="form-control m-2">
+                <label class="m-1">UserName</label>
+                <input class="input-group-text form-text m-2" asp-for="@Model.UserName" />
+            </div>
+           
+            <div class="form-control m-2">
+                <label class="m-1">Description</label>
+                <textarea class="form-control-plaintext input-group-text text-start" asp-for="@Model.Description"></textarea>
+            </div>
+            
+    </div>
+</div>

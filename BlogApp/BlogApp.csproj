@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\games\**" />
+    <Content Remove="wwwroot\games\**" />
+    <EmbeddedResource Remove="wwwroot\games\**" />
+    <None Remove="wwwroot\games\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.22" />
@@ -25,8 +32,7 @@
     <Folder Include="Infrastructures\TagHelpers\" />
     <Folder Include="Migrations\" />
     <Folder Include="Models\" />
-    <Folder Include="wwwroot\games\lgs\" />
-    <Folder Include="wwwroot\images\dynamic\" />
+    <Folder Include="wwwroot\images\dynamic\users\" />
   </ItemGroup>
 
   <ItemGroup>

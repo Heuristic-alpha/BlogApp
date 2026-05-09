@@ -25,9 +25,7 @@ else
             <div class="col m-2">
                 <span>
                     <img src="@urlLocator.Images.Static.GetUserProfileIcon(Model.AppUser?.IsMale ?? true)" alt="User Icon" />
-                    <label class="text-black">
-                        @Model.AppUser!.DisplayName
-                    </label>
+                    <a asp-page="/Profile/View" asp-route-id="@Model.AppUserId" class="text-black">@Model.AppUser?.DisplayName</a>
                 </span>               
             </div>         
         </div>
@@ -47,7 +45,7 @@ else
                             <input hidden name="CommentId" value="@Model.CommentId" />
                             <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
                             <input hidden name="VoteType" value="@(VoteType.Like)" />
-                            <input hidden name="ReturnUrl" value="@GetReturnUrl()" />
+                            <input hidden name="ReturnUrl" value="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()" />
                             <button class="btn btn-outline-success m-2">Like</button>
                         </form>
                     }
@@ -64,7 +62,7 @@ else
                             <input hidden name="CommentId" value="@Model.CommentId" />
                             <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
                             <input hidden name="VoteType" value="@(VoteType.Dislike)" />
-                            <input hidden name="ReturnUrl" value="@GetReturnUrl()" />
+                            <input hidden name="ReturnUrl" value="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()" />
                             <button class="btn btn-outline-danger m-2">Dislike</button>
                         </form>
                     }
@@ -76,10 +74,10 @@ else
 
 @functions
 {    
-    public string GetReturnUrl()
-    {
-        HttpRequest httpRequest = Html.ViewContext.HttpContext.Request;
-        return Url.Content(httpRequest.Path.ToUriComponent() + httpRequest.QueryString.ToString());
-    }
+    // public string GetReturnUrl()
+    // {
+    //     HttpRequest httpRequest = Html.ViewContext.HttpContext.Request;
+    //     return Url.Content(httpRequest.Path.ToUriComponent() + httpRequest.QueryString.ToString());
+    // }
   
 }

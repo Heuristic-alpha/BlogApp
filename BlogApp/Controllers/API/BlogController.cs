@@ -28,19 +28,15 @@ namespace BlogApp.Controllers
             if (blogSearch.BlogId != null) blogsQuery = blogsQuery.Where(b => b.BlogId == blogSearch.BlogId);
             if (blogSearch.AppUserId != null) blogsQuery = blogsQuery.Where(b => b.AppUserId == blogSearch.AppUserId);
             if (blogSearch.IsConfirmed != null) blogsQuery = blogsQuery.Where(b => b.IsConfirmed == blogSearch.IsConfirmed);
-            if (blogSearch.IsPublic != null) blogsQuery = blogsQuery.Where(b => b.IsPublic== blogSearch.IsPublic);
-            blogsQuery = blogsQuery.OrderBy(b => b.BlogId);
-
-            // string.Contains() can't compile to SQL command so we should
-            // execute SQL command then save result in a memory buffer
+            if (blogSearch.IsPublic != null) blogsQuery = blogsQuery.Where(b => b.IsPublic == blogSearch.IsPublic);
+            if (blogSearch.Title != null) blogsQuery = blogsQuery.Where(b => EF.Functions.Like(b.Title, $"%{blogSearch.Title}%"));
+            if (blogSearch.Content != null) blogsQuery = blogsQuery.Where(b => EF.Functions.Like(b.BlogContent, $"%{blogSearch.Content}%"));
+            if (blogSearch.Skip != null) blogsQuery = blogsQuery.Skip(blogSearch.Skip.Value);
+            if (blogSearch.Take != null) blogsQuery = blogsQuery.Take(blogSearch.Take.Value);
+            blogsQuery = blogsQuery.OrderBy(b => b.BlogId).ThenBy(b => b.CreationDateTime);
+          
             IEnumerable<Blog> bufferedBlogs = await blogsQuery.ToArrayAsync();
-            if (blogSearch.Title != null) bufferedBlogs = bufferedBlogs.Where(bf => bf.Title.Contains(blogSearch.Title,StringComparison.InvariantCultureIgnoreCase));
-            if (blogSearch.Content != null) bufferedBlogs = bufferedBlogs.Where(bf => bf.BlogContent.Contains(blogSearch.Content, StringComparison.InvariantCultureIgnoreCase));
-            if (blogSearch.Skip != null) bufferedBlogs = bufferedBlogs.Skip(blogSearch.Skip.Value);
-            if (blogSearch.Take != null) bufferedBlogs = bufferedBlogs.Take(blogSearch.Take.Value);
-
-            bufferedBlogs = bufferedBlogs.ToArray();
-
+           
             if (bufferedBlogs != null)
             {
                 foreach (var blog in bufferedBlogs)
@@ -114,7 +110,7 @@ namespace BlogApp.Controllers
                 var blogEntry = await _dataDbContext.Blogs.AddAsync(blog);
                 await _dataDbContext.SaveChangesAsync();
                 long blogId = blogEntry.Entity.BlogId;
-                foreach (BlogCategory bc in blogCategories) bc.BlogId = blogId;               
+                foreach (BlogCategory bc in blogCategories) bc.BlogId = blogId;
                 await _dataDbContext.BlogCategories.AddRangeAsync(blogCategories);
                 await _dataDbContext.SaveChangesAsync();
 

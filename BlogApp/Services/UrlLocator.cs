@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.FileProviders;
 
 namespace BlogApp.Services
 {
@@ -58,9 +59,12 @@ namespace BlogApp.Services
                 }
             }
             public class DynamicResource
-            {
+            {   
                 private IUrlHelper _urlHelper;
-                public DynamicResource(IUrlHelper urlHelper) => _urlHelper = urlHelper;
+                public DynamicResource(IUrlHelper urlHelper)
+                {
+                    _urlHelper = urlHelper;                  
+                }              
             }
         }
     }

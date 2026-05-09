@@ -39,9 +39,12 @@
         </div>
     </div>
     <div class="row align-items-center m-2">
-        <div class="col-5">+ After search, use pagination to view results.</div>
-        <div class="col m-2"><button form="form" type="submit" class="m-2 btn btn-outline-success">Search</button></div>
-        <div class="col-5"></div>
+        <div class="col-4">+ After search, use pagination to view results.</div>
+        <div class="col m-2">
+            <button class="m-2 btn btn-outline-danger" @onclick="() => SearchModel = new()">Clear all filters</button>
+            <button form="form" type="submit" class="m-2 btn btn-outline-success">Search</button>
+        </div>
+        <div class="col-4"></div>
     </div>
 </div>
 

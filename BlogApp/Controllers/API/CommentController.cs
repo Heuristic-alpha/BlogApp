@@ -1,9 +1,7 @@
 ﻿using BlogApp.Models;
-using BlogApp.Models.DataModels;
 using BlogApp.Models.JoinModels;
 using BlogApp.Models.SearchModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlogApp.Controllers
 {
@@ -20,7 +18,7 @@ namespace BlogApp.Controllers
             _dataDbContext = dbContext;
             _logger = logger;
         }
-        
+
         [HttpGet("{id:long}")]
         public async Task<IActionResult> Get(long id)
         {
@@ -47,24 +45,20 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> GetAll([FromBody] CommentSearch commentSearch)
         {
             IQueryable<Comment> commentsQuery = _dataDbContext.Comments.Include(c => c.AppUser)
-                                                                   .Include(c => c.AppUserCommnets)
-                                                                   .AsNoTracking();
+                                                                       .Include(c => c.AppUserCommnets)
+                                                                       .AsNoTracking();
 
             if (commentSearch.CommentId != null) commentsQuery = commentsQuery.Where(cq => cq.CommentId == commentSearch.CommentId);
             if (commentSearch.BlogId != null) commentsQuery = commentsQuery.Where(cq => cq.BlogId == commentSearch.BlogId);
             if (commentSearch.AppUserId != null) commentsQuery = commentsQuery.Where(cq => cq.AppUserId == commentSearch.AppUserId);
             if (commentSearch.IsConfirmed != null) commentsQuery = commentsQuery.Where(cq => cq.IsConfirmed == commentSearch.IsConfirmed);
-            commentsQuery = commentsQuery.OrderBy(cq => cq.CommentId);
+            if (commentSearch.CommentText != null) commentsQuery = commentsQuery.Where(cq => EF.Functions.Like(cq.StringContent, $"%{commentSearch.CommentText}%"));
+            if (commentSearch.Skip != null) commentsQuery = commentsQuery.Skip(commentSearch.Skip.Value);
+            if (commentSearch.Take != null) commentsQuery = commentsQuery.Take(commentSearch.Take.Value);
+            commentsQuery = commentsQuery.OrderBy(cq => cq.CommentId).ThenBy(cq => cq.CreationDateTime);
 
-            // string.Contains() can't compile to SQL command so we should
-            // execute SQL command then save result in a memory buffer
             IEnumerable<Comment> bufferedComments = await commentsQuery.ToArrayAsync();
-            if (commentSearch.CommentText != null) bufferedComments = bufferedComments.Where(bc => bc.StringContent.Contains(commentSearch.CommentText, StringComparison.InvariantCultureIgnoreCase));
-            if (commentSearch.Skip != null) bufferedComments = bufferedComments.Skip(commentSearch.Skip.Value);
-            if (commentSearch.Take != null) bufferedComments = bufferedComments.Take(commentSearch.Take.Value);
-
-            bufferedComments = bufferedComments.ToArray();
-
+                     
             if (bufferedComments != null)
             {
                 // resolve cyclic reference json error

@@ -68,6 +68,8 @@
     {
         if (Http == null) return;
 
+        Comment.AppUser = null;
+        Comment.Blog = null;
         var response = await Http.PutAsJsonAsync<Comment>("/api/Comment/Update", Comment);
         if (response.IsSuccessStatusCode)
         {

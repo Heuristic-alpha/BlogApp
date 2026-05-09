@@ -73,12 +73,12 @@ namespace BlogApp.Controllers
             }
             if (userSearch.UserName != null)
             {
-                identityAppUsers = identityAppUsers.Where(iau => iau.UserName == userSearch.UserName);
-                appUsers = appUsers.Where(au => au.DisplayName == userSearch.UserName);
+                identityAppUsers = identityAppUsers.Where(iau => EF.Functions.Like(iau.NormalizedUserName, $"%{userSearch.UserName.ToUpper()}%"));
+                appUsers = appUsers.Where(au => EF.Functions.Like(au.DisplayName.ToUpper(), $"%{userSearch.UserName.ToUpper()}%"));
             }
             if (userSearch.Email != null)
             {
-                identityAppUsers = identityAppUsers.Where(iau => iau.Email == userSearch.Email);
+                identityAppUsers = identityAppUsers.Where(iau => EF.Functions.Like(iau.NormalizedEmail, $"%{userSearch.Email.ToUpper()}%"));
             }
             if (userSearch.IsMale != null) // if IsMale == null then should select all genders
             {

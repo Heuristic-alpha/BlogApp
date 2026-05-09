@@ -1,0 +1,40 @@
+﻿@page
+@model BlogApp.Pages.Profile.EditModel
+@{
+    ViewBag.Title = "Profile Edit";
+    Layout = "_HomeLayout";
+}
+
+<partial name="_JqueryValidation" />
+<div class="m-2 bg-warning bg-opacity-25 border border-4 border-warning">
+    <h1 class="m-2 bg-warning text-black text-center">Edit Profile</h1>
+    <div class="m-2">
+        <form asp-page="Edit" method="post" enctype="multipart/form-data">
+            <div class="form-control m-2">
+                <div class="m-2 text-danger" asp-validation-summary="ModelOnly"></div>
+            </div>
+            <input hidden asp-for="@Model.UserId" />
+            <div class="form-control m-2">
+                <label class="m-1">UserName</label>
+                <span class="text-danger" asp-validation-for="@Model.UserName"></span>
+                <input class="input-group-text form-text m-2" asp-for="@Model.UserName" />
+            </div>
+            <div class="form-control m-2">
+                <label class="m-1">Email</label>
+                <span class="text-danger" asp-validation-for="@Model.Email"></span>
+                <input class="input-group-text form-text m-2" asp-for="@Model.Email" />
+            </div>
+            <div class="form-control m-2">
+                <label class="m-1">Description</label>
+                <span class="text-danger" asp-validation-for="@Model.Description"></span>
+                <textarea class="form-control-plaintext input-group-text text-start" asp-for="@Model.Description"></textarea>
+            </div>
+            <div class="form-control m-2">
+                <label class="m-1">Profile picture</label>
+                <span class="text-danger" asp-validation-for="@Model.FormFile"></span>
+                <input type="file" class="input-group-text form-text m-2" asp-for="@Model.FormFile" />
+            </div>
+            <button class="m-2 btn btn-outline-success">Save</button>
+        </form>
+    </div>
+</div>

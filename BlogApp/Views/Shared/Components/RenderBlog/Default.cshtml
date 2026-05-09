@@ -29,7 +29,7 @@ else
             <div class="col m-2 bg-secondary bg-opacity-25 border border-2 border-primary">
                 <h2 class="m-2 text-center text-black bg-warning bg-opacity-50">@Model.Title</h2>
                 <div class="m-2 bg-info bg-opacity-25">
-                    Authored by <span class="text-danger">@Model.AppUser?.DisplayName</span> at <span class="text-success">@Model.CreationDateTime.ToString()</span>
+                    Authored by <a asp-page="/Profile/View" asp-route-id="@Model.AppUserId" class="text-danger">@Model.AppUser?.DisplayName</a> at <span class="text-success">@Model.CreationDateTime.ToString()</span>
                 </div>
                 <div class="m-2 bg-light border border-2 border-secondary">
                     @foreach (string line in lines)

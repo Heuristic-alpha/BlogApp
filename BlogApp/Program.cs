@@ -20,6 +20,7 @@ builder.Services.AddDbContext<DataDbContext>(opts =>
 builder.Services.AddDbContext<IdentityContext>(opts =>
 {
     opts.UseSqlServer(connectionString: builder.Configuration["ConnectionStrings:IdentityDbConnection"]!);
+    if (builder.Environment.IsDevelopment()) opts.EnableSensitiveDataLogging();
 });
 builder.Services.AddIdentity<IdentityAppUser, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
 builder.Services.Configure<IdentityOptions>(opts =>
@@ -116,7 +117,6 @@ else
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseIdentityAppUser();

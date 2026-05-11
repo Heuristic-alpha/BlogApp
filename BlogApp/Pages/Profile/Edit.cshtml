@@ -31,10 +31,33 @@
             </div>
             <div class="form-control m-2">
                 <label class="m-1">Profile picture</label>
-                <span class="text-danger" asp-validation-for="@Model.FormFile"></span>
-                <input type="file" class="input-group-text form-text m-2" asp-for="@Model.FormFile" />
+                <div class="m-2">
+                    <label class="m-2 text-info">Should Change Profile Picture?</label>
+                    <input asp-for="@Model.ShouldChangeProfilePicture" id="changepic" />
+                </div>   
+                <div class="m-2" id="div">
+                    <span class="text-danger" asp-validation-for="@Model.ProfilePicture"></span>
+                    <input type="file" class="input-group-text form-text m-2" asp-for="@Model.ProfilePicture" />
+                </div>               
             </div>
             <button class="m-2 btn btn-outline-success">Save</button>
         </form>
     </div>
 </div>
+
+<script>
+    // implement colapse function on ShouldChangeProfilePicture check box:
+    let changePic = @(Model.ShouldChangeProfilePicture.ToString().ToLower())
+    window.addEventListener("DOMContentLoaded",()=>
+    {
+        let checkBox = document.getElementById("changepic");
+        let div =  document.getElementById("div");
+        checkBox.addEventListener("click",()=>
+        {
+            changePic = !changePic;
+            div.hidden = !changePic;
+        })
+        // set for first time:
+        div.hidden = !changePic;
+    })
+</script>

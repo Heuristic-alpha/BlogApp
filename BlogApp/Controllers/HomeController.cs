@@ -24,7 +24,8 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> BlogPublicView([FromRoute] long id, [FromQuery] string returnUrl)
         {
             Blog? blog = await _dataDbContext.Blogs.AsNoTracking()
-                                                   .Include(b => b.AppUser)
+                                                   .Include(b => b.AppUser!)
+                                                   .ThenInclude(au => au.AppUserOptional)
                                                    .Include(b => b.Comments!)
                                                    .ThenInclude(c => c.AppUser)
                                                    .FirstOrDefaultAsync(b => b.BlogId == id && b.IsConfirmed == true && b.IsPublic == true);
@@ -41,9 +42,6 @@ namespace BlogApp.Controllers
         public async Task<IActionResult> BlogListPublicView([FromQuery] int size = 10, [FromQuery] int page = 1)
         {
             var allUserBlogsQuery = _dataDbContext.Blogs.AsNoTracking()
-                                                     // .Include(b => b.AppUser)
-                                                     // .Include(b => b.BlogCategories!)
-                                                     // .ThenInclude(bc => bc.Category)
                                                         .Where(b => b.IsConfirmed == true && b.IsPublic == true)
                                                         .Select(b => new PublicBlog()
                                                         {

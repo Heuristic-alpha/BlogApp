@@ -21,11 +21,16 @@ namespace BlogApp.Pages.Profile
         [BindProperty]
         public string Description { get; set; } = string.Empty;
 
+        public AppUser AppUser { get; set; }
+
         public async Task<IActionResult> OnGetAsync()
         {
-            AppUser? appUser = await _dataDbContext.AppUsers.AsNoTracking().FirstOrDefaultAsync(au => au.AppUserId == Id);
+            AppUser? appUser = await _dataDbContext.AppUsers.AsNoTracking()
+                                                            .Include(au => au.AppUserOptional)
+                                                            .FirstOrDefaultAsync(au => au.AppUserId == Id);
             if (appUser != null)
             {
+                AppUser = appUser;
                 UserName = appUser.DisplayName;
                 Description = appUser.Description;
                 return Page();

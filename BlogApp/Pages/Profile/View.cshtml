@@ -1,5 +1,7 @@
 ﻿@page "{id:long}"
 @model BlogApp.Pages.Profile.ViewModel
+@inject UserProfilePictureService profilePictureService
+
 @{
     ViewBag.Title = "Profile View";
     Layout = "_HomeLayout";
@@ -8,8 +10,11 @@
 <div class="m-2 bg-info bg-opacity-25 border border-4 border-info">
     <h1 class="m-2 bg-info text-black text-center">User Profile</h1>
     <div class="m-2">
-                         
-            <div class="form-control m-2">
+        <div class="form-control m-2">
+            <img class="m-2" src="@(Url.Content(profilePictureService.GetProfilePictureURL(Model.AppUser)))" alt="User Icon" height="64" width="64" />
+        </div>
+        
+        <div class="form-control m-2">
                 <label class="m-1">UserName</label>
                 <input class="input-group-text form-text m-2" asp-for="@Model.UserName" />
             </div>

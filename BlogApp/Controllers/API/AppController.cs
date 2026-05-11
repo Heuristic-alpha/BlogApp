@@ -28,6 +28,7 @@ namespace BlogApp.Controllers
             DataBaseStatisticDto dataBaseStatistic = new DataBaseStatisticDto();
             dataBaseStatistic.IdentityAppUserCount = await _identityContext.Users.CountAsync();
             dataBaseStatistic.AppUsersCount = await _dataDbContext.AppUsers.CountAsync();
+            dataBaseStatistic.AppUserOptionalsCount = await _dataDbContext.AppUserOptionals.CountAsync();
             dataBaseStatistic.BlogsCount = await _dataDbContext.Blogs.CountAsync();
             dataBaseStatistic.CommentsCount = await _dataDbContext.Comments.CountAsync();
             dataBaseStatistic.AppUserCommentsCount = await _dataDbContext.AppUserComments.CountAsync();

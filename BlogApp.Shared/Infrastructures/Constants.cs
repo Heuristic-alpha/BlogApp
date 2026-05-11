@@ -24,5 +24,11 @@
             public const string Admins = "Admins";
             public const string Members = "Members";
         }
+
+        public struct StaticImagesURL
+        {
+            public static string MaleUserProfileIcon => Path.Combine("images", "static", "icon-male.svg");
+            public static string FemaleUserProfileIcon => Path.Combine("images", "static", "icon-female.svg");
+        }
     }
 }

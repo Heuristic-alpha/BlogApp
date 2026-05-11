@@ -14,6 +14,7 @@ namespace BlogApp.Infrastructures
             IdentityContext identityDb = serviceProvider.GetRequiredService<IdentityContext>();
             UserManager<IdentityAppUser> userManager = serviceProvider.GetRequiredService<UserManager<IdentityAppUser>>();
             RoleManager<IdentityRole> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            UserProfilePictureService userProfilePictureService = serviceProvider.GetRequiredService<UserProfilePictureService>();
 
             ILogger<DataBaseSeedler> logger = app.Services.GetRequiredService<ILogger<DataBaseSeedler>>();
 
@@ -21,6 +22,8 @@ namespace BlogApp.Infrastructures
             dataDb.Database.Migrate();
             identityDb.Database.EnsureDeleted();
             identityDb.Database.Migrate();
+
+            await userProfilePictureService.RemoveAllProfilePicturesAsync();
 
             if (!roleManager.Roles.Any())
             {

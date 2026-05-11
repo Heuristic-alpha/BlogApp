@@ -31,13 +31,20 @@
             </div>
             <div class="form-control m-2">
                 <label class="m-1">Profile picture</label>
+                <img class="m-2" src="@(Url.Content(Model.ProfilePictureUrl))" alt="User Icon" height="64" width="64" />
                 <div class="m-2">
                     <label class="m-2 text-info">Should Change Profile Picture?</label>
                     <input asp-for="@Model.ShouldChangeProfilePicture" id="changepic" />
-                </div>   
-                <div class="m-2" id="div">
-                    <span class="text-danger" asp-validation-for="@Model.ProfilePicture"></span>
-                    <input type="file" class="input-group-text form-text m-2" asp-for="@Model.ProfilePicture" />
+                </div>             
+                <div class="m-2" id="div1">
+                    <div class="m-2 bg-black bg-opacity-10">
+                        <label class="m-2 text-danger">Delete current picture?</label>
+                        <input asp-for="@Model.ShouldDeleteProfilePicture" id="deletepic" />
+                    </div>
+                    <div class="m-2" id="div2">
+                        <span class="text-danger" asp-validation-for="@Model.ProfilePicture"></span>
+                        <input type="file" class="input-group-text form-text m-2" asp-for="@Model.ProfilePicture" />
+                    </div>                 
                 </div>               
             </div>
             <button class="m-2 btn btn-outline-success">Save</button>
@@ -48,16 +55,27 @@
 <script>
     // implement colapse function on ShouldChangeProfilePicture check box:
     let changePic = @(Model.ShouldChangeProfilePicture.ToString().ToLower())
+    let deletePic = @(Model.ShouldDeleteProfilePicture.ToString().ToLower())
+
     window.addEventListener("DOMContentLoaded",()=>
     {
-        let checkBox = document.getElementById("changepic");
-        let div =  document.getElementById("div");
-        checkBox.addEventListener("click",()=>
+        let changeCheckBox = document.getElementById("changepic");
+        let deleteCheckBox = document.getElementById("deletepic");
+        let div1 =  document.getElementById("div1");
+        let div2 =  document.getElementById("div2");
+        changeCheckBox.addEventListener("click",()=>
         {
             changePic = !changePic;
-            div.hidden = !changePic;
-        })
-        // set for first time:
-        div.hidden = !changePic;
+            div1.hidden = !changePic;
+        });
+        deleteCheckBox.addEventListener("click", () =>
+        {
+            deletePic = !deletePic;
+            div2.hidden = deletePic;
+        });
+
+        // set hidden for the first time:
+        div1.hidden = !changePic;
+        div2.hidden = deletePic;
     })
 </script>

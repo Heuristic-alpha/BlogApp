@@ -2,7 +2,6 @@ using BlogApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace BlogApp.Pages.Profile
 {
@@ -12,18 +11,19 @@ namespace BlogApp.Pages.Profile
         // 250 KB
         const int MAX_File_Length = 262144;
 
-        static string[] s_ValidExtension = new string[] { ".jpeg", ".png" };
-
+        static string[] s_ValidExtension = new string[] { ".jpeg", ".png", ".jpg" };
 
         private DataDbContext _dataDbContext;
         private UserManager<IdentityAppUser> _userManager;
+        private UserProfilePictureService _userProfilePictureService;
         private ILogger<EditModel> _logger;
 
-        public EditModel(DataDbContext dataDbContext, UserManager<IdentityAppUser> userManager, ILogger<EditModel> logger)
+        public EditModel(DataDbContext dataDbContext, UserManager<IdentityAppUser> userManager, ILogger<EditModel> logger, UserProfilePictureService userProfilePictureService)
         {
             _dataDbContext = dataDbContext;
             _userManager = userManager;
             _logger = logger;
+            _userProfilePictureService = userProfilePictureService;
         }
 
         [BindProperty]
@@ -44,7 +44,12 @@ namespace BlogApp.Pages.Profile
         [BindProperty]
         public bool ShouldChangeProfilePicture { get; set; }
 
-        public IActionResult OnGet()
+        [BindProperty]
+        public bool ShouldDeleteProfilePicture { get; set; }
+
+        public string ProfilePictureUrl { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
         {
             IdentityAppUser? identityAppUser = HttpContext.GetIdentityAppUser();
             if (identityAppUser == null) return RedirectToPage("/Account/AccessDenied");
@@ -56,6 +61,7 @@ namespace BlogApp.Pages.Profile
             UserName = identityAppUser.UserName ?? "DEBUG: null";
             Email = identityAppUser.Email ?? "DEBUG: null";
             Description = appUser.Description;
+            ProfilePictureUrl = await _userProfilePictureService.GetProfilePictureURLAsync(appUser.AppUserId);
 
             return Page();
         }
@@ -66,7 +72,7 @@ namespace BlogApp.Pages.Profile
             if (identityAppUser == null || identityAppUser.AppUserId != UserId) return RedirectToPage("/Account/AccessDenied");
 
             // skip validation state of profile picture if it should not changed
-            if (!ShouldChangeProfilePicture)
+            if (!ShouldChangeProfilePicture || ShouldDeleteProfilePicture)
             {
                 string modelName = nameof(ProfilePicture);
                 ModelState.ClearValidationState(modelName);
@@ -108,31 +114,30 @@ namespace BlogApp.Pages.Profile
 
                 // 4- change user profile picture
                 if (ShouldChangeProfilePicture)
-                {                   
-                    // check picture size:
-                    if(ProfilePicture.Length > MAX_File_Length)
+                {
+                    if (ShouldDeleteProfilePicture)
                     {
-                        ModelState.AddModelError(nameof(ProfilePicture), "File lether than 250KB accepted");
-                        return Page();
+                        await _userProfilePictureService.RemoveProfilePictureAsync(identityAppUser.AppUserId);
                     }
-
-                    // check picture extension:
-                    string fileExtension = Path.GetExtension(ProfilePicture.FileName);
-                    if(!s_ValidExtension.Any(ve => ve.Equals(fileExtension)))
+                    else
                     {
-                        ModelState.AddModelError(nameof(ProfilePicture), $"Only picture with [{string.Join("  ", s_ValidExtension)}] formats is accepted");
-                        return Page();
-                    }
+                        // check picture size:
+                        if (ProfilePicture.Length > MAX_File_Length)
+                        {
+                            ModelState.AddModelError(nameof(ProfilePicture), "File lether than 250KB accepted");
+                            return Page();
+                        }
 
+                        // check picture extension:
+                        string fileExtension = Path.GetExtension(ProfilePicture.FileName);
+                        if (!s_ValidExtension.Any(ve => ve.Equals(fileExtension)))
+                        {
+                            ModelState.AddModelError(nameof(ProfilePicture), $"Only picture with [{string.Join("  ", s_ValidExtension)}] formats is accepted");
+                            return Page();
+                        }
 
-                    // debug:
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine($"Uploaded file from user is:");
-                    sb.AppendLine($"Name: {ProfilePicture?.Name}");
-                    sb.AppendLine($"FileName: {ProfilePicture?.FileName}");
-                    sb.AppendLine($"ContentType: {ProfilePicture?.ContentType}");
-                    sb.AppendLine($"Length: {ProfilePicture?.Length}");
-                    _logger.LogError(sb.ToString());
+                        await _userProfilePictureService.SavePictureAsync(ProfilePicture, identityAppUser.AppUserId);
+                    }                
                 }
 
                 await _dataDbContext.SaveChangesAsync();

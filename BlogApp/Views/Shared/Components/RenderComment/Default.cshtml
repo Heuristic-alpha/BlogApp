@@ -6,6 +6,8 @@
 @using Microsoft.EntityFrameworkCore
 
 @inject UrlLocator urlLocator
+@inject UserProfilePictureService profilePictureService
+
 @model Comment?
 
 @{
@@ -24,7 +26,7 @@ else
         <div class="row m-2">
             <div class="col m-2">
                 <span>
-                    <img src="@urlLocator.Images.Static.GetUserProfileIcon(Model.AppUser?.IsMale ?? true)" alt="User Icon" />
+                    <img src="@Url.Content(profilePictureService.GetProfilePictureURL(Model.AppUser!))" alt="User Icon" width="64" height="64" />
                     <a asp-page="/Profile/View" asp-route-id="@Model.AppUserId" class="text-black">@Model.AppUser?.DisplayName</a>
                 </span>               
             </div>         

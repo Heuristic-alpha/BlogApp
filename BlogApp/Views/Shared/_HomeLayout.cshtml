@@ -3,10 +3,12 @@
 @using BlogApp.ViewModels
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
-@inject UrlLocator urlLocator
+@inject UserProfilePictureService userProfilePictureService
 @{
     IdentityAppUser? identityAppUser = Html.ViewContext.HttpContext.GetIdentityAppUser();
-    AppUser? appUser = Html.ViewContext.HttpContext.GetAppUser();   
+    AppUser? appUser = Html.ViewContext.HttpContext.GetAppUser();
+  
+    string profilePictureURL = await userProfilePictureService.GetProfilePictureURLAsync(appUser?.AppUserId ?? default);
 }
 
 <!DOCTYPE html>
@@ -35,7 +37,7 @@
                 @if (identityAppUser != null) // user exist:
                 {
                     <div class=" m-2">
-                        <img src="@(urlLocator.Images.Static.GetUserProfileIcon(appUser!.IsMale))" alt="User Icon" />
+                        <img src="@(Url.Content(profilePictureURL))" alt="User Icon" height="64" width="64" />
                     </div>
                     <div class="text-light m-2">
                         UserName: <span class="text-info">@identityAppUser.UserName</span>

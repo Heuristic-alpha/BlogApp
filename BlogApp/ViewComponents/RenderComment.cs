@@ -16,10 +16,11 @@ namespace BlogApp.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(Comment comment, bool canAddLike = false)
         {          
-            if((comment != null) && (comment.AppUser == null || comment.AppUserCommnets == null))
+            if((comment != null) && (comment.AppUser == null  || comment.AppUser.AppUserOptional == null || comment.AppUserCommnets == null))
             {
                 comment = await _dbContext.Comments.AsNoTracking()
-                                                   .Include(c => c.AppUser)
+                                                   .Include(c => c.AppUser!)
+                                                   .ThenInclude(au => au.AppUserOptional)
                                                    .Include(c => c.AppUserCommnets)
                                                    .FirstAsync(c => c.CommentId == comment.CommentId);
             }           

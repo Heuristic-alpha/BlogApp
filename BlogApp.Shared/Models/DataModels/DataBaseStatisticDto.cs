@@ -4,6 +4,7 @@
     {
         public int IdentityAppUserCount { get; set; }
         public int AppUsersCount { get; set; }
+        public int AppUserOptionalsCount { get; set; }
         public int BlogsCount { get; set; }
         public int CommentsCount { get; set; }
         public int CategoriesCount { get; set; }

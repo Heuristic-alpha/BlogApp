@@ -34,7 +34,12 @@ namespace BlogApp.Models
         /// <summary>
         /// Navigation property to CommentVotes
         /// </summary>
-        public virtual IEnumerable<AppUserCommnet>? AppUserCommnets { get; set; } 
+        public virtual IEnumerable<AppUserCommnet>? AppUserCommnets { get; set; }
+
+        /// <summary>
+        /// Navigation property to AppUserOptional
+        /// </summary>
+        public virtual AppUserOptional? AppUserOptional { get; set; }
 
         /// <summary>
         /// link to IdentityAppUser that is in IdentityContext Database

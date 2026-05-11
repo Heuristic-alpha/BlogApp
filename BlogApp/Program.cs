@@ -101,6 +101,7 @@ if (builder.Environment.IsDevelopment())
 }
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UrlLocator>();
+builder.Services.AddScoped<UserProfilePictureService>();
 
 #endregion
 var app = builder.Build();

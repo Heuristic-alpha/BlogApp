@@ -19,7 +19,8 @@ namespace BlogApp.ViewComponents
             if(blog != null && (blog.AppUser == null || blog.Comments == null))
             {
                 blog = await _dataDbContext.Blogs.AsNoTracking()
-                                                 .Include(b => b.AppUser)
+                                                 .Include(b => b.AppUser!)
+                                                 .ThenInclude(au => au.AppUserOptional)
                                                  .Include(b => b.Comments!)
                                                  .ThenInclude(c => c.AppUserCommnets)
                                                  .FirstAsync(b => b.BlogId == blog.BlogId);

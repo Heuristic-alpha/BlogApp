@@ -14,12 +14,14 @@ namespace BlogApp.Controllers
         private DataDbContext _dataDbContext;
         private UserManager<IdentityAppUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
+        private UserProfilePictureService _userProfilePictureService;
 
-        public AppUserController(DataDbContext dataDbContext, UserManager<IdentityAppUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AppUserController(DataDbContext dataDbContext, UserManager<IdentityAppUser> userManager, RoleManager<IdentityRole> roleManager, UserProfilePictureService userProfilePictureService)
         {
             _dataDbContext = dataDbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _userProfilePictureService = userProfilePictureService;
         }
 
         /// <summary>
@@ -144,6 +146,7 @@ namespace BlogApp.Controllers
                 IdentityAppUser? identityAppUser = await _userManager.FindByIdAsync(appUser.AppIdentityId!);
                 if (identityAppUser != null)
                 {
+                    AppUserOptional? appUserOptional = await _dataDbContext.AppUserOptionals.AsNoTracking().FirstOrDefaultAsync(auo => auo.AppUserId == appUser.AppUserId);
                     UserDetailsDto userDetailsDto = new UserDetailsDto()
                     {
                         AppUserId = appUser.AppUserId,
@@ -153,6 +156,7 @@ namespace BlogApp.Controllers
                         IsMale = appUser.IsMale,
                         Description = appUser.Description,
                         CreationDateTime = appUser.CreationDateTime,
+                        ProfilePictureURL = appUserOptional?.ProfilePictureURL ?? string.Empty,
                     };
                     userDetailsDto.RolesDict = await GetRolesForUserAsDictAsync(identityAppUser);
 
@@ -166,7 +170,7 @@ namespace BlogApp.Controllers
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> Delete(long id)
         {
-            if (await AppUserHelper.TryDeleteUserAsync(_userManager, _dataDbContext, id))
+            if (await AppUserHelper.TryDeleteUserAsync(_userManager, _dataDbContext,_userProfilePictureService, id))
             {
                 return Ok();
             }
@@ -204,7 +208,7 @@ namespace BlogApp.Controllers
         {
             if (userDetails != null)
             {
-                (bool isSuccess, List<string> errors) = await AppUserHelper.TryUpdateUserAsync(_userManager, _dataDbContext, userDetails);
+                (bool isSuccess, List<string> errors) = await AppUserHelper.TryUpdateUserAsync(_userManager, _dataDbContext, _userProfilePictureService, userDetails);
                 if (isSuccess)
                 {
                     return Ok();

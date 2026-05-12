@@ -14,6 +14,7 @@ namespace BlogApp.Models.DataModels
         [EmailAddress] public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public Dictionary<string, bool>? RolesDict { get; set; }
+        public string ProfilePictureURL {  get; set; } = string.Empty;
 
         public IdentityAppUser? IdentityAppUser { get; set; }
 

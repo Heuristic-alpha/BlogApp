@@ -12,7 +12,6 @@ namespace BlogApp.Services
         public UserProfilePictureService(DataDbContext dataDbContext, IHostEnvironment hostEnvironment)
         {
             _dataDbContext = dataDbContext;
-
             _wwwRootPath = Path.Combine(hostEnvironment.ContentRootPath, "wwwroot");
             _directoryFullPath = Path.Combine(_wwwRootPath, _directoryRelativePath);
             if (!Directory.Exists(_directoryFullPath))

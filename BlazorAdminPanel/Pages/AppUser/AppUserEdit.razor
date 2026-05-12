@@ -2,17 +2,6 @@
 @page "/user/create"
 @attribute [Authorize(Roles = Constants.Roles.Manager)]
 
-@using BlazorAdminPanel
-@using BlazorAdminPanel.Elements
-@using BlazorAdminPanel.Gadgets
-@using BlazorAdminPanel.Layout
-@using BlazorAdminPanel.Services
-@using BlogApp.Models
-@using BlogApp.Models.DataModels
-@using BlogApp.Models.Enums
-@using BlogApp.Models.JoinModels
-@using BlogApp.Services
-
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime jSRuntime
@@ -23,6 +12,26 @@
 <EditForm Model="@UserDetailsDto" OnValidSubmit="async () => await HandleSubmit()">
     <DataAnnotationsValidator />
 
+    <InputText @bind-Value="@UserDetailsDto.ProfilePictureURL" readonly hidden />
+    @if (Mode == ActionMode.Update)
+    {
+        <div class="m-2 border border-2 border-primary">
+            <label class="form-label m-2">User Icon</label>
+            @if (string.IsNullOrEmpty(UserDetailsDto.ProfilePictureURL))
+            {
+                <label class="m-2 bg-danger bg-opacity-50 text-black">User currently not set any picture</label>
+            }
+            else
+            {
+                <div class="m-2 border border-5 border-dark">
+                    <img class="m-2" src="@(Constants.HostAddress + "/" + UserDetailsDto.ProfilePictureURL)" alt="Profile Icon" height="64" width="64" />
+                </div>
+                <div class="m-2 text-danger">
+                    Delete Picture? <input class="m-2" type="checkbox" @bind="@ShouldDeleteProfilePicture" />
+                </div>
+            }
+        </div>
+    }
     <div class="m-2 border border-2 border-info">
         <label class="form-label m-2">AppUserId</label>
         <InputNumber class="m-2 form-control" @bind-Value="@UserDetailsDto.AppUserId" readonly />
@@ -32,11 +41,11 @@
         <InputText class="m-2 form-control" @bind-Value="@UserDetailsDto.IdentityAppUserId" readonly />
     </div>
     <div class="m-2 border border-2 border-info">
-        <label class="form-label m-2">Email</label>     
+        <label class="form-label m-2">Email</label>
         <span>
-             <ValidationMessage For="() => UserDetailsDto.Email" />
+            <ValidationMessage For="() => UserDetailsDto.Email" />
         </span>
-        <InputText class="m-2 form-control" @bind-Value="@UserDetailsDto.Email"/>             
+        <InputText class="m-2 form-control" @bind-Value="@UserDetailsDto.Email" />
     </div>
     <div class="m-2 border border-2 border-info">
         <span>
@@ -78,28 +87,28 @@
     </div>
     <div class="m-2 border border-2 border-info">
         <label class="form-label m-2">Roles:</label>
-        @if(UserDetailsDto.RolesDict != null)
+        @if (UserDetailsDto.RolesDict != null)
         {
-            @foreach (KeyValuePair<string,bool> keyValuePair in UserDetailsDto.RolesDict)
+            @foreach (KeyValuePair<string, bool> keyValuePair in UserDetailsDto.RolesDict)
             {
                 string key = keyValuePair.Key;
                 bool val = keyValuePair.Value;
                 <div class="m-2">
                     <span>
-                        <label class="form-label text-secondary">@key</label>                        
-                        <input type="checkbox" class="valid" checked="@val" @onchange="@(async (ChangeEventArgs e) => 
-                              {
-                                  bool? boolVal = (bool)e.Value!;
-                                  if(boolVal != null) UserDetailsDto.RolesDict[key] = boolVal.Value;
-                               // await jSRuntime.InvokeVoidAsync("console.log", $"Current dict state: ({key}) : ({UserDetailsDto.RolesDict[key]})");
-                              })" />
-                    </span>
-                </div>
-                
-            }
-        }       
+                        <label class="form-label text-secondary">@key</label>
+                        <input type="checkbox" class="valid" checked="@val" @onchange="@(async (ChangeEventArgs e) =>
+                                                                                                          {
+                                                                                                              bool? boolVal = (bool)e.Value!;
+                                                                                                              if (boolVal != null) UserDetailsDto.RolesDict[key] = boolVal.Value;
+                                                                                                                                                                                  // await jSRuntime.InvokeVoidAsync("console.log", $"Current dict state: ({key}) : ({UserDetailsDto.RolesDict[key]})");
+                                                                                                          })" />
+            </span>
+        </div>
+
+                }
+        }
     </div>
-    
+
     <div class="form-group m-5">
         @if (Mode == ActionMode.Create)
         {
@@ -121,6 +130,8 @@
 
     public ActionMode Mode => Id == 0 ? ActionMode.Create : ActionMode.Update;
 
+    public bool ShouldDeleteProfilePicture { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
         ActionMode mode = Mode;
@@ -129,8 +140,8 @@
             UserDetailsDto? udd = await Http.GetFromJsonAsync<UserDetailsDto>($"/api/AppUser/Get/{Id}");
             if (udd != null) UserDetailsDto = udd;
         }
-        else if(mode == ActionMode.Create)
-        { 
+        else if (mode == ActionMode.Create)
+        {
             // get empty roles dict ('0' route value is a api contract)
             UserDetailsDto.RolesDict = await Http.GetFromJsonAsync<Dictionary<string, bool>>($"/api/AppUser/GetIdentityRoles/0");
             UserDetailsDto.CreationDateTime = DateTime.Now;
@@ -153,6 +164,9 @@
         }
         else if (Mode == ActionMode.Update)
         {
+            // set Url empty mean it should deleted
+            if (ShouldDeleteProfilePicture) UserDetailsDto.ProfilePictureURL = string.Empty;
+
             var response = await Http.PutAsJsonAsync<UserDetailsDto>("/api/AppUser/Update", UserDetailsDto);
             if (response.IsSuccessStatusCode)
             {

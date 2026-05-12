@@ -1,7 +1,10 @@
-﻿namespace BlogApp.Infrastructures
+﻿using System.Diagnostics.Contracts;
+
+namespace BlogApp.Infrastructures
 {
     public partial class Constants
     {
+        public const string HostAddress = "http://localhost:5000";
         public const string JWTAuthToken = "authToken";
         public const string JWTSecretName = "jwtSecret";
         public const int TokenValidationLifeTimeInHours = 24;

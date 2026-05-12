@@ -37,7 +37,8 @@ namespace BlogApp.Pages
                 AppUser = HttpContext.GetAppUser();
                 if (CanShowBlogs)
                 {
-                    UserBlogs = await _dataDbContext.Blogs.Include(b => b.AppUser)
+                    UserBlogs = await _dataDbContext.Blogs.Include(b => b.AppUser!)
+                                                          .ThenInclude(au => au.AppUserOptional)
                                                           .Include(b => b.Comments)    
                                                           .AsNoTracking()
                                                           .Where(b => b.AppUserId == identityAppUser.AppUserId)
@@ -45,7 +46,8 @@ namespace BlogApp.Pages
                 }
                 if (CanShowComments)
                 {
-                    UserComments = await _dataDbContext.Comments.Include(c => c.AppUser)
+                    UserComments = await _dataDbContext.Comments.Include(c => c.AppUser!)
+                                                                .ThenInclude(au => au.AppUserOptional)
                                                                 .Include(c => c.Blog)
                                                                 .Include(c => c.AppUserCommnets)
                                                                 .AsSplitQuery()

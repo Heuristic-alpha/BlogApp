@@ -38,13 +38,14 @@ namespace BlogApp.Controllers
             IdentityAppUser? identityAppUser = HttpContext.GetIdentityAppUser();
             if (identityAppUser == null) return RedirectToPage("/Account/AccessDenied");
 
-            Blog? blog = await _dataDbContext.Blogs.Include(b => b.AppUser)
-                                                       .Include(b => b.Comments)
-                                                       .Include(b => b.BlogCategories!)
+            Blog? blog = await _dataDbContext.Blogs.Include(b => b.AppUser!)
+                                                        .ThenInclude(au => au.AppUserOptional)
+                                                   .Include(b => b.Comments)
+                                                   .Include(b => b.BlogCategories!)
                                                        .ThenInclude(bc => bc.Category)
-                                                       .AsNoTracking()
-                                                       .AsSplitQuery()
-                                                       .FirstOrDefaultAsync(t => t.BlogId == id);
+                                                   .AsNoTracking()
+                                                   .AsSplitQuery()
+                                                   .FirstOrDefaultAsync(t => t.BlogId == id);
             if (blog != null)
             {
                 return View(blog);
@@ -61,7 +62,7 @@ namespace BlogApp.Controllers
             Category[] categories = await _dataDbContext.Categories.ToArrayAsync();
             EditBlogViewModel ebvm = new EditBlogViewModel()
             {
-                Blog = new Blog() { Title = "", BlogContent = "", AppUserId = identityAppUser.AppUserId , IsConfirmed = false},
+                Blog = new Blog() { Title = "", BlogContent = "", AppUserId = identityAppUser.AppUserId, IsConfirmed = false },
                 CategoryNames = categories.Select(c => c.Name).ToArray(),
                 CategoriesValue = categories.Select(c => false).ToArray(),
             };
@@ -145,7 +146,7 @@ namespace BlogApp.Controllers
             if (identityAppUser == null) return RedirectToPage("/Account/AccessDenied");
 
             if (ModelState.IsValid)
-            {               
+            {
                 // Users only can update blog just for themself, not others:
                 if (ebvm.Blog.AppUserId != identityAppUser.AppUserId) return RedirectToPage("/Account/AccessDenied");
 

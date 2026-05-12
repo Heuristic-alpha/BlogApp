@@ -75,26 +75,28 @@ namespace BlogApp.Infrastructures
             }
         }
 
+        //public static async Task<bool> TryDeleteUserAsync(UserManager<IdentityAppUser> userManager,
+        //                                                  DataDbContext dbContext,
+        //                                                  UserProfilePictureService profilePictureService,
+        //                                                  string email)
+        //{
+        //    IdentityAppUser? identity = await userManager.FindByEmailAsync(email);
+        //    if (identity != null)
+        //    {
+        //        var result = await userManager.DeleteAsync(identity);
+        //        if (result != null)
+        //        {
+        //            AppUser? user = await dbContext.AppUsers.FirstOrDefaultAsync(a => a.AppIdentityId == identity.Id);
+        //            dbContext.AppUsers.Remove(user!);
+        //            await dbContext.SaveChangesAsync();
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
         public static async Task<bool> TryDeleteUserAsync(UserManager<IdentityAppUser> userManager,
                                                           DataDbContext dbContext,
-                                                          string email)
-        {
-            IdentityAppUser? identity = await userManager.FindByEmailAsync(email);
-            if (identity != null)
-            {
-                var result = await userManager.DeleteAsync(identity);
-                if (result != null)
-                {
-                    AppUser? user = await dbContext.AppUsers.FirstOrDefaultAsync(a => a.AppIdentityId == identity.Id);
-                    dbContext.AppUsers.Remove(user!);
-                    await dbContext.SaveChangesAsync();
-                    return true;
-                }
-            }
-            return false;
-        }
-        public static async Task<bool> TryDeleteUserAsync(UserManager<IdentityAppUser> userManager,
-                                                          DataDbContext dbContext,
+                                                          UserProfilePictureService profilePictureService,
                                                           long appUserId)
         {
             // Query and delete object and all it dependents
@@ -111,6 +113,7 @@ namespace BlogApp.Infrastructures
                     var result = await userManager.DeleteAsync(identity);
                     if (result != null)
                     {
+                        await profilePictureService.RemoveProfilePictureAsync(appUserId);
                         foreach (Blog todo in appUser.Blogs ?? Enumerable.Empty<Blog>()) dbContext.Blogs.Remove(todo);
                         foreach (Comment comment in appUser.Comments ?? Enumerable.Empty<Comment>()) dbContext.Comments.Remove(comment);
                         foreach (AppUserCommnet cv in appUser.AppUserCommnets ?? Enumerable.Empty<AppUserCommnet>()) dbContext.AppUserComments.Remove(cv);
@@ -141,12 +144,14 @@ namespace BlogApp.Infrastructures
 
         public static async Task<(bool, List<string>)> TryUpdateUserAsync(UserManager<IdentityAppUser> userManager,
                                                                           DataDbContext dataDbContext,
+                                                                          UserProfilePictureService profilePictureService,
                                                                           long appUserId,
                                                                           string identityAppUserId,
                                                                           string newUserName,
                                                                           string newDescription,
                                                                           string newEmail,
                                                                           bool isMale,
+                                                                          bool shouldDeleteProfilePicture,
                                                                           IDictionary<string, bool>? Roles)
         {
             List<string> errors = new List<string>();
@@ -194,7 +199,11 @@ namespace BlogApp.Infrastructures
                                     }
                                 }
                             }
-                        }                        
+                        }
+
+                        // update profile picture (for now we can only remove it)
+                        if (shouldDeleteProfilePicture) await profilePictureService.RemoveProfilePictureAsync(appUserId);
+
                         // Successfull operation:
                         return (true, errors);
                     }
@@ -219,16 +228,19 @@ namespace BlogApp.Infrastructures
 
         public static async Task<(bool, List<string>)> TryUpdateUserAsync(UserManager<IdentityAppUser> userManager,
                                                                           DataDbContext dataDbContext,
+                                                                          UserProfilePictureService profilePictureService,
                                                                           UserDetailsDto userDetailsDto)
         {
             var result = await TryUpdateUserAsync(userManager,
                                                   dataDbContext,
+                                                  profilePictureService,
                                                   userDetailsDto.AppUserId,
                                                   userDetailsDto.IdentityAppUserId,
                                                   userDetailsDto.UserName,
                                                   userDetailsDto.Description ?? string.Empty,
                                                   userDetailsDto.Email,
                                                   userDetailsDto.IsMale,
+                                                  string.IsNullOrEmpty(userDetailsDto.ProfilePictureURL),
                                                   userDetailsDto.RolesDict);
             return result;
         }

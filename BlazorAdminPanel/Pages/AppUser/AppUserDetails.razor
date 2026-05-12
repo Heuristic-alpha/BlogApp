@@ -7,6 +7,19 @@
 <h1 class="bg-info text-black text-center">User Details</h1>
 
 <EditForm Model="@UserDetailsDto">
+    <div class="m-2 border border-2 border-primary">
+        <label class="form-label m-2">User Icon</label>
+        @if (string.IsNullOrEmpty(UserDetailsDto.ProfilePictureURL))
+        {
+            <label class="m-2 bg-danger bg-opacity-50 text-black">User currently not set any picture</label>
+        }
+        else
+        {
+            <div class="m-2 border border-5 border-dark">
+                <img class="m-2" src="@(Constants.HostAddress + "/" + UserDetailsDto.ProfilePictureURL)" alt="Profile Icon" height="64" width="64" />
+            </div>
+        }
+    </div>
     <div class="m-2 border border-2 border-info">
         <label class="form-label m-2">AppUserId</label>
         <InputNumber class="m-2 form-control" @bind-Value="@UserDetailsDto.AppUserId" readonly />

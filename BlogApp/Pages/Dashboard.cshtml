@@ -54,7 +54,8 @@
                             int curentI = i;
                             Blog blog = Model.UserBlogs[curentI];
 
-                            <div class="m-2">
+                            <div class="m-2 bg-warning bg-opacity-25 border border-2 border-success">
+                                <h2 class="m-2 text-black text-center bg-danger bg-opacity-50">Blog #@(i+1)</h2>
                                 <vc:render-blog blog="@blog" />
                             </div>
                         }

@@ -36,15 +36,15 @@
                     <label class="m-2 text-info">Should Change Profile Picture?</label>
                     <input asp-for="@Model.ShouldChangeProfilePicture" id="changepic" />
                 </div>             
-                <div class="m-2" id="div1">
+                <div class="m-2" id="div1">                  
+                    <div class="m-2" id="div2">
+                        <span class="text-danger" asp-validation-for="@Model.ProfilePicture"></span>
+                        <input type="file" class="input-group-text form-text m-2" asp-for="@Model.ProfilePicture" />
+                    </div>
                     <div class="m-2 bg-black bg-opacity-10">
                         <label class="m-2 text-danger">Delete current picture?</label>
                         <input asp-for="@Model.ShouldDeleteProfilePicture" id="deletepic" />
                     </div>
-                    <div class="m-2" id="div2">
-                        <span class="text-danger" asp-validation-for="@Model.ProfilePicture"></span>
-                        <input type="file" class="input-group-text form-text m-2" asp-for="@Model.ProfilePicture" />
-                    </div>                 
                 </div>               
             </div>
             <button class="m-2 btn btn-outline-success">Save</button>

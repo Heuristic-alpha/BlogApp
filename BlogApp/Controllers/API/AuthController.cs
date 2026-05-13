@@ -28,13 +28,13 @@ namespace BlogApp.Controllers
             _tokenValidationParameters = tokenValidationParameters;
             _logger = logger;
 
-            string? strVal = _configuration[Constants.JWTSecretName];
+            string? strVal = _configuration[Constants.JWTAuthentication.JWTSecretName];
             if (strVal != null)
             {
                 _jwtSecret = Encoding.ASCII.GetBytes(strVal);
             }
             else
-                throw new KeyNotFoundException($"Not Found any {Constants.JWTSecretName} entry on configuration file");
+                throw new KeyNotFoundException($"Not Found any {Constants.JWTAuthentication.JWTSecretName} entry on configuration file");
         }
 
         [HttpPost]
@@ -64,7 +64,7 @@ namespace BlogApp.Controllers
                 SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.UtcNow.AddHours(Constants.TokenValidationLifeTimeInHours),
+                    Expires = DateTime.UtcNow.AddHours(Constants.JWTAuthentication.TokenValidationLifeTimeInHours),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_jwtSecret), SecurityAlgorithms.HmacSha256Signature)
                 };
 

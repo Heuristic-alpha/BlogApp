@@ -28,13 +28,13 @@
         <table class="table table-bordered table-hover border border-2 border-dark">
             <thead>
                 <tr class="fa-bold">
-                    <th><SortArrayButton ItemT="Blog" PropertyT="long" @bind-Values="@SelectedBlogs" Selector="(t) => t.BlogId">Id</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Blog" PropertyT="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.AppUser?.DisplayName" Comparer="StringComparer.OrdinalIgnoreCase">User</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Blog" PropertyT="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.Title" Comparer="StringComparer.OrdinalIgnoreCase">Title</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Blog" TProperty="long" @bind-Values="@SelectedBlogs" Selector="(t) => t.BlogId">Id</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Blog" TProperty="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.AppUser?.DisplayName" Comparer="StringComparer.OrdinalIgnoreCase">User</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Blog" TProperty="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.Title" Comparer="StringComparer.OrdinalIgnoreCase">Title</SortArrayButton></th>
                     <th>Content</th>
-                    <th><SortArrayButton ItemT="Blog" PropertyT="bool" @bind-Values="@SelectedBlogs" Selector="(t) => t.IsConfirmed">Is Confirmed?</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Blog" PropertyT="bool" @bind-Values="@SelectedBlogs" Selector="(t) => t.IsPublic">Is Public?</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Blog" PropertyT="DateTime" @bind-Values="@SelectedBlogs" Selector="(t) => t.CreationDateTime">Creation Date</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Blog" TProperty="bool" @bind-Values="@SelectedBlogs" Selector="(t) => t.IsConfirmed">Is Confirmed?</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Blog" TProperty="bool" @bind-Values="@SelectedBlogs" Selector="(t) => t.IsPublic">Is Public?</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Blog" TProperty="DateTime" @bind-Values="@SelectedBlogs" Selector="(t) => t.CreationDateTime">Creation Date</SortArrayButton></th>
                 </tr>
             </thead>
             <tbody>

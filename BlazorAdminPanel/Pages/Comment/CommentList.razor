@@ -28,13 +28,13 @@ else if (listType.Value == ListType.ForUser)
         <table class="table table-bordered table-hover border border-2 border-dark">
             <thead>
                 <tr class="fa-bold">
-                    <th><SortArrayButton ItemT="Comment" PropertyT="long" @bind-Values="@SelectedComments" Selector="(Comment c) => c.CommentId">Id</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Comment" PropertyT="string" @bind-Values="@SelectedComments" Selector="(Comment c) => c.AppUser!.DisplayName">User</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Comment" TProperty="long" @bind-Values="@SelectedComments" Selector="(Comment c) => c.CommentId">Id</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Comment" TProperty="string" @bind-Values="@SelectedComments" Selector="(Comment c) => c.AppUser!.DisplayName">User</SortArrayButton></th>
                     <th>Content</th>
-                    <th><SortArrayButton ItemT="Comment" PropertyT="bool" @bind-Values="@SelectedComments" Selector="(Comment c) => c.IsConfirmed">Is Confirmed?</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Comment" PropertyT="int" @bind-Values="@SelectedComments" Selector="(Comment c) => c.Like">Likes</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Comment" PropertyT="int" @bind-Values="@SelectedComments" Selector="(Comment c) => c.Dislike">Dislikes</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Comment" PropertyT="DateTime" @bind-Values="@SelectedComments" Selector="(Comment c) => c.CreationDateTime">Creation Date</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Comment" TProperty="bool" @bind-Values="@SelectedComments" Selector="(Comment c) => c.IsConfirmed">Is Confirmed?</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Comment" TProperty="int" @bind-Values="@SelectedComments" Selector="(Comment c) => c.Like">Likes</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Comment" TProperty="int" @bind-Values="@SelectedComments" Selector="(Comment c) => c.Dislike">Dislikes</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Comment" TProperty="DateTime" @bind-Values="@SelectedComments" Selector="(Comment c) => c.CreationDateTime">Creation Date</SortArrayButton></th>
                     <th></th>
                 </tr>
             </thead>

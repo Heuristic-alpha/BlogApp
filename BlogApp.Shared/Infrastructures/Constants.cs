@@ -1,13 +1,15 @@
-﻿using System.Diagnostics.Contracts;
-
-namespace BlogApp.Infrastructures
+﻿namespace BlogApp.Infrastructures
 {
     public partial class Constants
     {
         public const string HostAddress = "http://localhost:5000";
-        public const string JWTAuthToken = "authToken";
-        public const string JWTSecretName = "jwtSecret";
-        public const int TokenValidationLifeTimeInHours = 24;
+
+        public struct JWTAuthentication
+        {
+            public const string JWTAuthToken = "authToken";
+            public const string JWTSecretName = "jwtSecret";
+            public const int TokenValidationLifeTimeInHours = 24;
+        }
 
         public struct BootstarpColor
         {
@@ -30,8 +32,17 @@ namespace BlogApp.Infrastructures
 
         public struct StaticImagesURL
         {
-            public static string MaleUserProfileIcon => Path.Combine("images", "static", "icon-male.svg");
-            public static string FemaleUserProfileIcon => Path.Combine("images", "static", "icon-female.svg");
+            public const string MaleUserProfileIcon = "images/static/icon-male.svg";
+            public const string FemaleUserProfileIcon = "images/static/icon-female.svg";
+
+            public const string BooleanTrueIcon = "images/static/icon-true.svg";
+            public const string BooleanFalseIcon = "images/static/icon-false.svg";
+
+            public const string FaceHappyIcon = "images/static/icon-happy-face.png";
+            public const string FaceUnhappyIcon = "images/static/icon-unhappy-face.png";
+
+            public const string SmallArrowUpIcon = "images/static/small-arrow-up.png";
+            public const string SmallArrowDownIcon = "images/static/small-arrow-down.png";
         }
     }
 }

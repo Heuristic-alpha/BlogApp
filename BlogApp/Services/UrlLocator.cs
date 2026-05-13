@@ -18,8 +18,6 @@ namespace BlogApp.Services
 
         public ImagesResource Images { get; init; }
 
-
-
         // ******************************************************************************************* //
 
         public class ImagesResource
@@ -28,12 +26,10 @@ namespace BlogApp.Services
             {
                 _urlHelper = urlHelper;
                 Static = new StaticResource(urlHelper);
-                Dynamic = new DynamicResource(urlHelper);
             }
 
             private IUrlHelper _urlHelper;
             public StaticResource Static { get; init; }
-            public DynamicResource Dynamic { get; init; }
 
             // ******************************************************************************************* //
 
@@ -44,28 +40,20 @@ namespace BlogApp.Services
 
                 public string GetFaceEmojiIcon(bool isHappy)
                 {
-                    return isHappy ? _urlHelper.Content("images/static/icon-happy-face.png") : _urlHelper.Content("images/static/icon-unhappy-face.png");
+                    return isHappy ? _urlHelper.Content(Constants.StaticImagesURL.FaceHappyIcon) : _urlHelper.Content(Constants.StaticImagesURL.FaceUnhappyIcon);
                 }
 
                 public string GetUserProfileIcon(bool isMale)
                 {
-                    if (isMale) return _urlHelper.Content("images/static/icon-male.svg");
-                    else return _urlHelper.Content("images/static/icon-female.svg");
+                    if (isMale) return _urlHelper.Content(Constants.StaticImagesURL.MaleUserProfileIcon);
+                    else return _urlHelper.Content(Constants.StaticImagesURL.FemaleUserProfileIcon);
                 }
 
                 public string GetBooleanIcon(bool isTrue)
                 {
-                    return isTrue ? _urlHelper.Content("images/static/icon-true.svg") : _urlHelper.Content("images/static/icon-false.svg");
+                    return isTrue ? _urlHelper.Content(Constants.StaticImagesURL.BooleanTrueIcon) : _urlHelper.Content(Constants.StaticImagesURL.BooleanFalseIcon);
                 }
-            }
-            public class DynamicResource
-            {   
-                private IUrlHelper _urlHelper;
-                public DynamicResource(IUrlHelper urlHelper)
-                {
-                    _urlHelper = urlHelper;                  
-                }              
-            }
+            }            
         }
     }
 }

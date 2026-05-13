@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\dynamic\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BlogApp.Shared\BlogApp.Shared.csproj" />
   </ItemGroup>
 

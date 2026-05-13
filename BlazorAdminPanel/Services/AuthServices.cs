@@ -93,7 +93,7 @@ namespace BlazorAdminPanel.Services
             if (loginResult.Success)
             {
                 SetJWTBearerHeader(loginResult.Token);
-                await SetCookie(Constants.JWTAuthToken, loginResult.Token, Constants.TokenValidationLifeTimeInHours);
+                await SetCookie(Constants.JWTAuthentication.JWTAuthToken, loginResult.Token, Constants.JWTAuthentication.TokenValidationLifeTimeInHours);
                 NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             }
             return loginResult;
@@ -102,7 +102,7 @@ namespace BlazorAdminPanel.Services
         {
             ClearJWTBearerHeader();
             // Clear token in cookie storage
-            await SetCookie(Constants.JWTAuthToken, string.Empty, -1);
+            await SetCookie(Constants.JWTAuthentication.JWTAuthToken, string.Empty, -1);
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
@@ -144,7 +144,7 @@ namespace BlazorAdminPanel.Services
         }
         private async Task<string?> GetJWTTokenFromCookieAsync()
         {
-            string result = await GetCookie(Constants.JWTAuthToken);
+            string result = await GetCookie(Constants.JWTAuthentication.JWTAuthToken);
             if (string.IsNullOrEmpty(result))
             {
                 return null;

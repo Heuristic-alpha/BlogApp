@@ -80,7 +80,7 @@ builder.Services.AddAuthentication(opts =>
         // Alternative location to look for token
         OnMessageReceived = context =>
         {
-            var token = context.Request.Cookies[Constants.JWTAuthToken];
+            var token = context.Request.Cookies[Constants.JWTAuthentication.JWTAuthToken];
             if (!string.IsNullOrEmpty(token))
             {
                 context.Token = token;

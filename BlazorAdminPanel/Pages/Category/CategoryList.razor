@@ -12,8 +12,8 @@
         <table class="table table-striped table-bordered table-hover border border-2 border-dark">
             <thead>
                 <tr class="fa-bold">
-                    <th><SortArrayButton ItemT="Category" PropertyT="long" @bind-Values="@SelectedCategories" Selector="(Category c) => c.CategoryId">Id</SortArrayButton></th>
-                    <th><SortArrayButton ItemT="Category" PropertyT="string" @bind-Values="@SelectedCategories" Selector="(Category c) => c.Name">Name</SortArrayButton></th>                   
+                    <th><SortArrayButton TItem="Category" TProperty="long" @bind-Values="@SelectedCategories" Selector="(Category c) => c.CategoryId">Id</SortArrayButton></th>
+                    <th><SortArrayButton TItem="Category" TProperty="string" @bind-Values="@SelectedCategories" Selector="(Category c) => c.Name">Name</SortArrayButton></th>
                     <th></th>
                 </tr>
             </thead>

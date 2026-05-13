@@ -1,29 +1,28 @@
-﻿@typeparam ItemT
-@typeparam PropertyT
+﻿@typeparam TItem
+@typeparam TProperty
 
-<button class="btn" @onclick="OnClick">
+<button class="btn m-1" @onclick="OnClick">
     <span>
         <b>
             @ChildContent
         </b>
-        <img alt="arrow" src="@GetImageSource()" />
-    </span>
-   
+        <img class="m-1" alt="small-arrow" src="@GetImageSource()" width="16" height="16"/>
+    </span>  
 </button>
 
 
 @code {
 
     [Parameter, EditorRequired]
-    public ItemT[] Values { get; set; }
+    public TItem[] Values { get; set; }
     [Parameter, EditorRequired]
-    public EventCallback<ItemT[]> ValuesChanged { get; set; }
+    public EventCallback<TItem[]> ValuesChanged { get; set; }
 
     [Parameter,EditorRequired]
-    public Func<ItemT, PropertyT> Selector { get; set; }
+    public Func<TItem, TProperty> Selector { get; set; }
 
     [Parameter]
-    public IComparer<PropertyT>? Comparer { get; set; }
+    public IComparer<TProperty>? Comparer { get; set; }
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
@@ -51,9 +50,12 @@
         else return "text-danger";
     }
 
+    private static string s_UpArrowURL = $"{Constants.HostAddress}/{Constants.StaticImagesURL.SmallArrowUpIcon}";
+    private static string s_DownArrowURL = $"{Constants.HostAddress}/{Constants.StaticImagesURL.SmallArrowDownIcon}";
+
     private string GetImageSource()
     {
-        if (_IsAcending) return "images/static/small-arrow-down.png";
-        else return "images/static/small-arrow-up.png";
+        if (_IsAcending) return s_DownArrowURL;
+        else return s_UpArrowURL;
     }
 }

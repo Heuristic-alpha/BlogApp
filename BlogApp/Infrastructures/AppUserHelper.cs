@@ -43,7 +43,7 @@ namespace BlogApp.Infrastructures
                     DisplayName = userName,
                     AppIdentityId = identityAppUser!.Id,
                     IsMale = isMale,
-                    Description = password // Should remove on published
+                    Description = string.Empty 
                 };
                 await dbContext.AppUsers.AddAsync(appUser);
                 await dbContext.SaveChangesAsync();

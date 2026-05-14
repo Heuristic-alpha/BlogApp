@@ -1,10 +1,17 @@
 ﻿@inject NavigationManager Navigation
 
-<div class="container border border-info m-1 bg-light">
+<div class="container border border-info m-1 bg-secondary bg-opacity-10">
     <div class="row m-2">
         <div class="col m-2">
             <span>
-                <img src="@GetUserProfileIcon(Comment.AppUser?.IsMale ?? true)" alt="User Icon" />
+                @if (Comment.AppUser != null && Comment.AppUser.AppUserOptional != null && !string.IsNullOrEmpty(Comment.AppUser.AppUserOptional.ProfilePictureURL))
+                {
+                    <img class="m-2" src="@($"{Constants.HostAddress}/{Comment.AppUser.AppUserOptional.ProfilePictureURL}")" alt="User Icon" />
+                }
+                else
+                {
+                    <img class="m-2" src="@GetUserProfileIcon(Comment.AppUser?.IsMale ?? true)" alt="User Icon" />
+                }             
                 <label class="text-black">
                     @(Comment.AppUser?.DisplayName ?? "Debug: appuser displayName is null")
                 </label>
@@ -40,14 +47,19 @@
     [Parameter, EditorRequired]
     public Comment Comment { get; set; }
 
+    private static string s_HappyFaceIcon = $"{Constants.HostAddress}/{Constants.StaticImagesURL.FaceHappyIcon}";
+    private static string s_UnhappyFaceIcon = $"{Constants.HostAddress}/{Constants.StaticImagesURL.FaceUnhappyIcon}";
+    private static string s_MaleIcon = $"{Constants.HostAddress}/{Constants.StaticImagesURL.MaleUserProfileIcon}";
+    private static string s_FemaleIcon = $"{Constants.HostAddress}/{Constants.StaticImagesURL.FemaleUserProfileIcon}";
+
     public string GetFaceEmojiIcon(bool isHappy)
     {       
-        return isHappy ? "images/static/icon-happy-face.png" : "images/static/icon-unhappy-face.png";
+        return isHappy ? s_HappyFaceIcon : s_UnhappyFaceIcon;
     }
 
     public string GetUserProfileIcon(bool isMale)
     {
-        if (isMale) return "images/static/icon-male.svg";
-        else return "images/static/icon-female.svg";
+        if (isMale) return s_MaleIcon;
+        else return s_FemaleIcon;
     }
 }

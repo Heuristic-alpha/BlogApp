@@ -16,7 +16,7 @@
         <div class="bg-secondary text-light text-center">List of all Comments:</div>
         <table class="table table-bordered table-hover">
             <thead>
-                <tr class="fa-bold">
+                <tr class="d-md-table-row">
                     <th>Blog Tile</th>
                     <th>Comment Content</th>
                     <th>Creation Date</th>
@@ -32,10 +32,7 @@
                             <td>@(Model.SelectedItems[i].StringContent.Length > MAX_CONTENT_LENGTH ? Model.SelectedItems[i].StringContent[0..MAX_CONTENT_LENGTH] + " ..." : Model.SelectedItems[i].StringContent)</td>                           
                             <td>@Model.SelectedItems[i].CreationDateTime.ToString()</td>
                             <td>
-                                <span>
-                                   @*  <a class="btn btn-outline-info m-1" asp-action="Read" asp-route-id="@Model.SelectedItems[i].BlogId">Details</a>
-                                    <a class="btn btn-outline-success m-1" asp-action="Update" asp-route-id="@Model.SelectedItems[i].BlogId">Edit</a>
-                                    *@
+                                <span>                                 
                                     <form method="post" asp-action="Delete">
                                         <input hidden name="id" value="@Model.SelectedItems[i].CommentId" />
                                         <button class="btn btn-outline-danger m-1" type="submit">Delete</button>

@@ -5,7 +5,7 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" Context="ctx">
                 <Authorizing>
-                    Please wait ...
+                    Please wait ... <span class="m-2 spinner-border text-info">c</span>
                 </Authorizing>
                 <NotAuthorized>
                     @if (ctx.User.Identity?.IsAuthenticated ?? false)
@@ -13,6 +13,7 @@
                         <LayoutView Layout="@typeof(AuthLayout)">
                             <PageTitle>Not Authorized</PageTitle>
                             <h1 class="bg-danger text-black text-center">You (@ctx.User.Identity.Name) dont have any permissions to visit this page.</h1>
+                            <p class="m-2 text-center">You can <a class="text-primary" href="@AuthServices.LogoutPagePath">logout</a> and login with privileged account.</p>
                         </LayoutView>
                     }
                     else

@@ -103,7 +103,9 @@ namespace BlazorAdminPanel.Services
             ClearJWTBearerHeader();
             // Clear token in cookie storage
             await SetCookie(Constants.JWTAuthentication.JWTAuthToken, string.Empty, -1);
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
+            AuthenticationState authenticationState = await GetAuthenticationStateAsync();
+            NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
         }
 
         private async Task SetCookie(string name, string value, int hours)

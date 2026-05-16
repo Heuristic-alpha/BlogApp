@@ -13,44 +13,35 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <a class="nav-link" href="@Constants.HostAddress">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Site
+                <span class="fa fa-server"></span><p class="m-3">Site</p>
             </a>
         </div>
-       @*  <div class="nav-item px-3">
-            <a class="nav-link" @onclick="@(()=>Navigation.NavigateTo(""))">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </a>
-        </div> *@
         <div class="nav-item px-3">
             <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("database/statistic"))">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Database Statistic
+                <span class="fa fa-database"></span><p class="m-3">Database Statistic</p>
             </a>
         </div>
         <div class="nav-item px-3">
             <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("user/list"))">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> User list
+                <span class="fa fa-people-arrows"></span><p class="m-3">Users list</p>
             </a>
         </div>
         <div class="nav-item px-3">
             <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("blog/list"))">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Blog list
+                <span class="fa fa-blog"></span><p class="m-3">Blogs list</p>
             </a>
         </div>
         <div class="nav-item px-3">
             <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("comment/list"))">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Comment list
+                <span class="fa fa-comment"></span><p class="m-3">Comments list</p>
             </a>
         </div>
         <div class="nav-item px-3">
             <a class="nav-link" @onclick="@(() => Navigation.NavigateTo("category/list"))">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Category list
+                <span class="fa fa-tags"></span><p class="m-3">Categories list</p>
             </a>
         </div>
     </nav>
-</div>
-
-<div class="down-row">
-    <RealTimeWatch UpdateInterval="500" class="bg-dark text-center text-warning" />
 </div>
 
 @code {

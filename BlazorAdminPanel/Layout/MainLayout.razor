@@ -4,21 +4,24 @@
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager Navigation
 
-<ErrorBoundary Context="error">
-   <ChildContent>
+<ErrorBoundary Context="error" @ref="@_errorBoundary">
+    <ChildContent>
         <div class="page">
             <div class="sidebar">
                 <NavMenu />
             </div>
-
             <main>
                 <div class="container">
                     <div class="row">
-                        <div class="col-2 top-row-left">
+                        <div class="col-4 top-row-left">
                             @if (NavManagerHistory.HasBack)
                             {
                                 <button class="btn btn-info" @onclick="() => NavManagerHistory.GoBack()">Back</button>
                             }
+                            <div class="m-2 bg-light bg-opacity-10 border border-1 border-secondary">
+                                <RealTimeWatch UpdateInterval="250" class="m-2 text-center text-black" />
+                            </div>
+
                         </div>
                         <div class="col top-row-right">
                             @{
@@ -28,7 +31,11 @@
                             {
                                 <span>
                                     UserName: <span class="m-2 text-success">@user.Identity.Name</span> Email: <span class="m-2 text-success">@(user.FindFirstValue("email"))</span>
-                                    <span class="m-2"><button class="btn btn-danger" @onclick="@(() => Navigation.NavigateTo(AuthServices.LogoutPagePath))">Logout</button></span>
+                                    <span class="m-2">
+                                        <button class="btn btn-danger" @onclick="@(() => Navigation.NavigateTo(AuthServices.LogoutPagePath))">
+                                            Logout
+                                        </button>
+                                    </span>
                                 </span>
                             }
                             else
@@ -43,7 +50,7 @@
                 </article>
             </main>
         </div>
-   </ChildContent>
+    </ChildContent>
     <ErrorContent>
         <div class="m-2 border border-2 border-danger">
             <h2 class="m-2 bg-danger text-black text-center">Error</h2>
@@ -53,6 +60,16 @@
             <div class="m-2 text-secondary">
                 @error.ToString()
             </div>
+            <div class="text-center">
+                <button class="btn btn-outline-dark btn-sm m-2" @onclick="@(() => _errorBoundary?.Recover())">
+                    Recover
+                </button>
+            </div>
         </div>
     </ErrorContent>
 </ErrorBoundary>
+
+@code
+{
+    ErrorBoundary? _errorBoundary;
+}

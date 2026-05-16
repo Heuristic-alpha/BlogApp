@@ -17,8 +17,8 @@
 @inject NavigationManager Navigation
 @inject JsonSerializerOptions JSO
 
-<PageTitle>Blog list (@listType?.Value)</PageTitle>
-<h1 class="bg-secondary text-white text-center">Blog list (@(listType!.Value == ListType.ForUser ? $"for user:Id={Id}" : "Global"))</h1>
+<PageTitle>Blogs list (@listType?.Value)</PageTitle>
+<h1 class="bg-secondary text-white text-center">Blogs list (@(listType!.Value == ListType.ForUser ? $"for user:Id={Id}" : "Global"))</h1>
 @if(listType!.Value == ListType.Global)
 {
     <BlogSearchBox OnClick="async (bs) => { _blogSearch = bs; await UpdateListAsync(); }" />
@@ -27,7 +27,7 @@
     <div class="row row-cols-md-1 bg-light">
         <table class="table table-bordered table-hover border border-2 border-dark">
             <thead>
-                <tr class="fa-bold">
+                <tr class="d-lg-table-row">
                     <th><SortArrayButton TItem="Blog" TProperty="long" @bind-Values="@SelectedBlogs" Selector="(t) => t.BlogId">Id</SortArrayButton></th>
                     <th><SortArrayButton TItem="Blog" TProperty="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.AppUser?.DisplayName" Comparer="StringComparer.OrdinalIgnoreCase">User</SortArrayButton></th>
                     <th><SortArrayButton TItem="Blog" TProperty="string" @bind-Values="@SelectedBlogs" Selector="(t) => t.Title" Comparer="StringComparer.OrdinalIgnoreCase">Title</SortArrayButton></th>

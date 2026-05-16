@@ -9,25 +9,25 @@
 @inject HttpClient Http
 @inject JsonSerializerOptions JSO
 
-<PageTitle>Comment list (@listType!.Value.ToString())</PageTitle>
+<PageTitle>Comments list (@listType!.Value.ToString())</PageTitle>
 @if (listType!.Value == ListType.Global)
 {
-    <h1 class="bg-secondary text-white text-center">Comment list (Global)</h1>   
+    <h1 class="bg-secondary text-white text-center">Comments list (Global)</h1>   
     <CommentSearchBox OnClick="async (cs) => { _commentSearch = cs; await UpdateListAsync(); }" />   
 }
 else if (listType.Value == ListType.ForBlog)
 {
-    <h1 class="bg-secondary text-white text-center">Comment list (@($"for blog: Id={BlogId}"))</h1>
+    <h1 class="bg-secondary text-white text-center">Comments list (@($"for blog: Id={BlogId}"))</h1>
 }
 else if (listType.Value == ListType.ForUser)
 {
-    <h1 class="bg-secondary text-white text-center">Comment list (@($"for user: Id={UserId}"))</h1>
+    <h1 class="bg-secondary text-white text-center">Comments list (@($"for user: Id={UserId}"))</h1>
 }
 <div class="container-md">
     <div class="row row-cols-md-1 bg-light">
         <table class="table table-bordered table-hover border border-2 border-dark">
             <thead>
-                <tr class="fa-bold">
+                <tr class="d-lg-table-row">
                     <th><SortArrayButton TItem="Comment" TProperty="long" @bind-Values="@SelectedComments" Selector="(Comment c) => c.CommentId">Id</SortArrayButton></th>
                     <th><SortArrayButton TItem="Comment" TProperty="string" @bind-Values="@SelectedComments" Selector="(Comment c) => c.AppUser!.DisplayName">User</SortArrayButton></th>
                     <th>Content</th>

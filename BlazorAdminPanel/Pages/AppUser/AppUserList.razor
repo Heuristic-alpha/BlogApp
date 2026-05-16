@@ -16,7 +16,7 @@
     <div class="row row-cols-md-1 bg-light">
         <table class="table table-bordered table-hover border border-2 border-dark">
             <thead>
-                <tr class="fa-bold">
+                <tr class="d-lg-table-row">
                     <th><SortArrayButton TItem="UserDetailsDto" TProperty="long" @bind-Values="@SelectedAppUsers" Selector="(u) => u.AppUserId">AppUserId</SortArrayButton></th>
                     <th><SortArrayButton TItem="UserDetailsDto" TProperty="string" @bind-Values="@SelectedAppUsers" Selector="(u) => u.UserName" Comparer="StringComparer.OrdinalIgnoreCase">UserName</SortArrayButton></th>
                     <th><SortArrayButton TItem="UserDetailsDto" TProperty="string" @bind-Values="@SelectedAppUsers" Selector="(u) => u.Email" Comparer="StringComparer.OrdinalIgnoreCase">Email</SortArrayButton></th>

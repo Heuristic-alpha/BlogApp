@@ -3,12 +3,16 @@
 @using BlogApp.ViewModels
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
+
 @inject UserProfilePictureService userProfilePictureService
+@inject LocalManager LM
 @{
     IdentityAppUser? identityAppUser = Html.ViewContext.HttpContext.GetIdentityAppUser();
     AppUser? appUser = Html.ViewContext.HttpContext.GetAppUser();
-  
     string profilePictureURL = await userProfilePictureService.GetProfilePictureURLAsync(appUser?.AppUserId ?? default);
+
+    Language language = Language.ENG;
+    if (Enum.TryParse<Language>(Context.Session.GetString(Constants.CookieNames.Language) ?? "ENG", true, out Language result)) { language = result; }
 }
 
 <!DOCTYPE html>
@@ -21,7 +25,7 @@
     <base href="~/" />   
     <title>@ViewBag.Title</title>
 </head>
-<body class="font-monospace">
+<body class="@GetClass(language)" dir="@LocalManager.GetDirection(language)">
     <div class="container-fluid bg-dark">
         <div class="row text-center align-items-center">
             <div class="col-3">
@@ -29,13 +33,24 @@
                     <span class="m-1"><span class="fa fa-home"></span></span>
                 </a>
                 <a class="btn btn-outline-light" href="@Url.Content("webassembly")">
-                    <span class="m-1"><span class="fa fa-terminal"></span></span>
+                    <span class="m-1"><span class="fa fa-address-book"></span></span>
                 </a>
-                <a class="btn btn-outline-light" asp-controller="Home" asp-action="About">About</a>
+                <form asp-controller="Home" asp-action="SetLanguage" method="get" class="btn btn-outline-light">
+                    <span class="m-1"><span class="fa fa-globe-americas"></span></span>
+                    <input type="text" name="returnURL" value="@Context.Request.GetPathWithQuery()" hidden />
+                    <select name="language" onchange="this.form.submit()">
+                        @if (language == Language.ENG) { <option selected value="ENG">English</option>}
+                        else {<option value="ENG">English</option>}
+
+                        @if (language == Language.FA) { <option selected value="FA">Persian</option>}
+                        else {<option value="FA">Persian</option>}
+                    </select>
+                </form>
+                <a class="btn btn-outline-light" asp-controller="Home" asp-action="About">@LM.GetLocalOrKey("About",language)</a>
                 <component type="@typeof(BlogApp.Blazor.RealTimeWatch)" render-mode="Server" param-UpdateInterval="500" />
             </div>
             <div class="col">
-                <a class="btn fs-2 text-light animation-fadeOutIn-1" asp-controller="Home" asp-action="Index"><h2><b>Blog App</b></h2></a>
+                <a class="btn fs-2 text-light animation-fadeOutIn-1" asp-controller="Home" asp-action="Index"><h2><b>@LM.GetLocalOrKey("BlogApp", language)</b></h2></a>
             </div>
             <div class="col-3 m-2">
                
@@ -46,15 +61,15 @@
                     </div>
                     <div class="text-light m-2">
                         <span class="m-1"><span class="fa fa-user-alt"></span></span>
-                        UserName: <span class="text-info">@identityAppUser.UserName</span>
+                        @LM.GetLocalOrKey("UserName", language): <span class="text-info">@identityAppUser.UserName</span>
                     </div>
                     <div class="text-light m-2">
                         <span class="m-1"><span class="fa fa-mail-bulk"></span></span>
-                        Email: <span class="text-info">@identityAppUser.Email</span>
+                        @LM.GetLocalOrKey("Email", language): <span class="text-info">@identityAppUser.Email</span>
                     </div>
                     <div class="m-2">
                         <a asp-page="/Dashboard" class="btn btn-outline-warning">
-                            Dashboard
+                            @LM.GetLocalOrKey("Dashboard", language)
                             <span class="m-1"><span class="fa fa-desktop"></span></span>
                         </a>
                     </div>
@@ -62,10 +77,10 @@
                 else // there is not logined user
                 {
                     <div class="m-2 text-warning">
-                        You are not Logged in
+                        @LM.GetLocalOrKey("You are not Logged in", language)
                     </div>
                     <div class="m-2">
-                        <a asp-page="/Account/Login" class="btn btn-outline-warning">Login</a>
+                        <a asp-page="/Account/Login" class="btn btn-outline-warning">@LM.GetLocalOrKey("Login", language)</a>
                     </div>
                 }
                 
@@ -78,3 +93,13 @@
     </div>
 </body>
 </html>
+
+@functions
+{
+    private string? GetClass(Language language)
+    {
+        if (language == Language.ENG) return "font-monospace";
+        if (language == Language.FA) return "";
+        else return null;
+    }
+}

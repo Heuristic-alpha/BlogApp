@@ -1,15 +1,19 @@
-﻿@{
+﻿@inject LocalManager LM
+@{
     Layout = "_HomeLayout";
     ViewBag.Title = "About";
+
+    Language language = Language.ENG;
+    if (Enum.TryParse<Language>(Context.Session.GetString(Constants.CookieNames.Language) ?? "ENG", true, out Language result)) { language = result; }
 }
 
 <div class="container">
     <div class="row">
         <div class="col-2"></div>
         <div class="col text-center bg-black text-white align-content-center p-2 m-2">
-             <h5 class="text-warning">About</h5>
-             <h6>Created by Hossein Sarlak as its first standalone WebApp.</h6>
-             <h6>Creation data 05/04/2026</h6>
+            <h5 class="text-warning">@LM.GetLocalOrKey("About", language)</h5>
+            <h6>Created by Hossein Sarlak as its first standalone WebApp.</h6>
+            <h6>Creation data 05/04/2026</h6>
         </div>
         <div class="col-2"></div>
     </div>
@@ -20,7 +24,4 @@
         </div>
         <div class="col-5"></div>
     </div>
-</div>
-<div>
-    
 </div>

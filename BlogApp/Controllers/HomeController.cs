@@ -61,5 +61,15 @@ namespace BlogApp.Controllers
             PaginateItemsViewModel<PublicBlog> model = new(page, size, thisPageBlogs, await allUserBlogsQuery.CountAsync());
             return View(model);
         }
+
+        public IActionResult SetLanguage(string returnURL, string language = "ENG")
+        {
+            HttpContext.Session.SetString(Constants.CookieNames.Language, language);
+            if (string.IsNullOrEmpty(returnURL))
+            {
+                return View("Index");
+            }
+            else return Redirect(returnURL);
+        }
     }
 }

@@ -4,6 +4,11 @@
     {
         public const string HostAddress = "http://localhost:5000";
 
+        public struct CookieNames
+        {
+            public const string Language = "Language";
+        }
+
         public struct JWTAuthentication
         {
             public const string JWTAuthToken = "authToken";

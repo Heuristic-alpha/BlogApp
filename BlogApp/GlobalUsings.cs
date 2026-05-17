@@ -5,4 +5,5 @@ global using BlogApp;
 global using BlogApp.ViewModels;
 global using BlogApp.Services;
 global using BlogApp.Infrastructures;
+global using BlogApp.Infrastructures.Localization;
 

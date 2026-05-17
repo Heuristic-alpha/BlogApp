@@ -1,4 +1,5 @@
-﻿using BlogApp.Models;
+﻿using BlogApp.Infrastructures.Localization;
+using BlogApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -102,6 +103,12 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UrlLocator>();
 builder.Services.AddScoped<UserProfilePictureService>();
+builder.Services.AddSingleton<LocalManager>();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(opts =>
+{
+    opts.Cookie.IsEssential = true;
+});
 
 #endregion
 var app = builder.Build();
@@ -116,6 +123,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
+app.UseSession();
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseAuthentication();
@@ -134,6 +142,8 @@ app.UseBlazorFrameworkFiles("/webassembly");
 app.MapFallbackToFile("/webassembly/{*path:nonfile}", "/webassembly/index.html");
 
 await SeedDataDb.SeedingDataDb(app);
+LocalManager localManager = app.Services.GetRequiredService<LocalManager>();
+await localManager.LoadAsync();
 
 #endregion
 app.Run();

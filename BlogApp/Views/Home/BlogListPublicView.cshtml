@@ -1,13 +1,15 @@
-﻿@model PaginateItemsViewModel<PublicBlog>
+﻿@inject LocalManager LM
+@model PaginateItemsViewModel<PublicBlog>
 @{
     const int MAX_CONTENT_LENGTH = 70;
     Layout = "_HomeLayout";
     ViewBag.Title = "List of Public Blog";
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();
 }
 
 <div class="container-md">
     <div class="row bg-white align-items-center">
-        <h1 class="col-12 bg-warning text-black text-center">Public Blogs</h1>
+        <h1 class="col-12 bg-warning text-black text-center">@LM.GetLocalOrKey("Public Blogs", lang)</h1>
     </div>
     <div class="row m-2">
         <div class="col-1"></div>
@@ -27,13 +29,13 @@
                         </div>
                     }
                     <div class="m-2 bg-info bg-opacity-10 border border-1 border-success">
-                       @(" ") Authored by <span class="text-danger">@pb.Author</span> at <span class="text-success">@pb.PublishDate</span>
+                        @(" ") @LM.GetLocalOrKey("Authored by", lang) <span class="text-danger">@pb.Author</span> @LM.GetLocalOrKey("at", lang) <span class="text-success">@pb.PublishDate</span>
                     </div>
                     <div class="m-2 bg-light border border-3 border-secondary">
                         @(pb.Content.Length > MAX_CONTENT_LENGTH ? pb.Content[0..MAX_CONTENT_LENGTH] + " ..." : pb.Content)
                     </div>
                     <div class="m-2 align-content-center">
-                        <a class="m-2 btn btn-info" asp-action="BlogPublicView" asp-route-id="@pb.BlogId" asp-route-returnUrl="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()">Read</a>
+                        <a class="m-2 btn btn-info" asp-action="BlogPublicView" asp-route-id="@pb.BlogId" asp-route-returnUrl="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()">@LM.GetLocalOrKey("See", lang)</a>
                     </div>
                 </div>
                 <div class="m-5"> @*Blank*@ </div>

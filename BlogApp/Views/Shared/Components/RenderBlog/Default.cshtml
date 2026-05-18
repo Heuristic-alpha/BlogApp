@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Identity
 @model Blog
 @inject UserProfilePictureService profilePictureService
-
+@inject LocalManager LM
 @{
     IdentityAppUser? identityAppUser = Html.ViewContext.HttpContext.GetIdentityAppUser();
     string[] lines = Model.BlogContent.Split('\n', StringSplitOptions.None);
@@ -14,6 +14,9 @@
     {
         categories = (string[])value!;
     }
+
+    Language lang = Language.ENG;
+    if (Enum.TryParse<Language>(Context.Session.GetString(Constants.CookieNames.Language) ?? "ENG", true, out Language result)) { lang = result; }
 }
 
 @if (@Model == null)
@@ -31,7 +34,7 @@ else
                 <h2 class="m-2 text-center text-black bg-warning bg-opacity-50">@Model.Title</h2>
                 <div class="m-2 bg-info bg-opacity-25">
                     <img class="m-2" src="@Url.Content(profilePictureService.GetProfilePictureURL(Model.AppUser!))" alt="User Icon" width="64" height="64" />
-                    Authored by <a asp-page="/Profile/View" asp-route-id="@Model.AppUserId" class="text-danger">@Model.AppUser?.DisplayName</a> at <span class="text-success">@Model.CreationDateTime.ToString()</span>
+                    @LM.GetLocalOrKey("Authored by", lang) <a asp-page="/Profile/View" asp-route-id="@Model.AppUserId" class="text-danger">@Model.AppUser?.DisplayName</a> @LM.GetLocalOrKey("at", lang) <span class="text-success">@Model.CreationDateTime.ToString()</span>
                 </div>
                 <div class="m-2 bg-light border border-2 border-secondary">
                     @foreach (string line in lines)
@@ -42,7 +45,7 @@ else
                 @if (categories != null && categories.Any())
                 {
                     <div class="m-2 bg-info bg-opacity-25">
-                        Categories:
+                        @LM.GetLocalOrKey("Categories", lang):
                         @foreach (string cat in categories)
                         {
                             <span class="m-2 bg-info text-black text-center border border-1 border-white">@cat</span>
@@ -57,19 +60,19 @@ else
             <div class="col m-2 bg-success bg-opacity-25 border border-2 border-success">
                 @if(identityAppUser == null)
                 {
-                    <p>- Logined user can post commnts on this blog. </p>
-                    <a class="text-primary" asp-page="/Account/Login">Login</a>
+                    <p>- @LM.GetLocalOrKey("Logined user can post commnts on this blog", lang). </p>
+                    <a class="text-primary" asp-page="/Account/Login">@LM.GetLocalOrKey("Login", lang)</a>
                 }
                 else
                 {
                     @* Write new comment *@
-                    <label class="m-2 text-primary">New Comment:</label>
+                    <label class="m-2 text-primary">@LM.GetLocalOrKey("New Comment", lang):</label>
                     <form method="post" asp-controller="CommentOperation" asp-action="AddAndReload">
                         <input hidden name="BlogId" value="@Model.BlogId" />
                         <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
-                        <input hidden name="ReturnUrl" value="@GetReturnUrl()" />
+                        <input hidden name="ReturnUrl" value="@Context.Request.GetPathWithQuery()" />
                         <textarea class="m-2 form-control-plaintext input-group-text text-start bg-info bg-opacity-50 text-secondary" name="Text"></textarea>
-                        <button class="btn btn-outline-warning m-2">Add</button>
+                        <button class="btn btn-outline-warning m-2">@LM.GetLocalOrKey("Make", lang)</button>
                     </form>
                 }
             </div>
@@ -79,7 +82,7 @@ else
         <div class="row m-2">
             <div class="col-2"></div>
             <div class="col m-2 bg-success bg-opacity-25 border border-2 border-success">
-                <h4 class="m-2 text-center text-black bg-primary bg-opacity-50">User Comments</h4>
+                <h4 class="m-2 text-center text-black bg-primary bg-opacity-50">@LM.GetLocalOrKey("Comments", lang)</h4>
                 @if (Model.Comments != null && Model.Comments.Any())
                 {
                     @foreach (var c in Model.Comments)
@@ -89,7 +92,7 @@ else
                 }
                 else
                 {
-                    <p>- No comment yet.</p>
+                    <p>- @LM.GetLocalOrKey("No comment yet", lang).</p>
                 }
             </div>
             <div class="col-2"></div>
@@ -99,9 +102,9 @@ else
 
 @functions
 {
-    public string GetReturnUrl()
-    {
-        HttpRequest httpRequest = Html.ViewContext.HttpContext.Request;
-        return Url.Content(httpRequest.Path.ToUriComponent() + httpRequest.QueryString.ToString());
-    }
+    // public string GetReturnUrl()
+    // {
+    //     HttpRequest httpRequest = Html.ViewContext.HttpContext.Request;
+    //     return Url.Content(httpRequest.Path.ToUriComponent() + httpRequest.QueryString.ToString());
+    // }
 }

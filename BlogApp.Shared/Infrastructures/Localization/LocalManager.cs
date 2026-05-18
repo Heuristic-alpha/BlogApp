@@ -1,38 +1,41 @@
-﻿using System.Text.Json;
+﻿using Microsoft.Extensions.Logging;
+using System.IO;
+using System.Text.Json;
 
 namespace BlogApp.Infrastructures.Localization
 {
     public class LocalManager
     {
-        private string _localizationFilePath;
+        public const string FileName = "Localization.json";
+        public const string LocalizationFileURL = $"{Constants.HostAddress}/{FileName}";
+
+        private string _serverLocalizationFilePath;
         private Dictionary<string, Payload> _dictionary;
         private JsonSerializerOptions _jsonSerializerOptions;
         private object _dictionaryLock;
 
-        public LocalManager(string localizationFilePath): this()
+        // Base Ctor
+        public LocalManager(ILogger<LocalManager> logger)
         {
-            _localizationFilePath = localizationFilePath;
-        }
-
-        public LocalManager()
-        {
-            _localizationFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Localization.json");
+            _serverLocalizationFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", FileName);
             _dictionary = new Dictionary<string, Payload>();
             _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerOptions.Default)
             {
                 WriteIndented = true,
             };
             _dictionaryLock = new object();
+
+            logger.LogInformation($"ServerLocalizationFile Path is at [{_serverLocalizationFilePath}]");
         }
 
         public async Task SaveAsync()
         {
-            await SaveToFileAsync(_localizationFilePath);
+            await SaveToFileAsync(_serverLocalizationFilePath);
         }
 
         public async Task LoadAsync()
         {
-            await LoadFromFileAsync(_localizationFilePath);
+            await LoadFromFileAsync(_serverLocalizationFilePath);
         }
 
         public async Task SaveToFileAsync(string path)
@@ -52,24 +55,33 @@ namespace BlogApp.Infrastructures.Localization
             using FileStream fs = File.OpenRead(path);
             using TextReader tr = new StreamReader(fs);
             string json = await tr.ReadToEndAsync();
-                                
+
+            await LoadFromJsonAsync(json);
+        }
+
+        public async Task LoadFromJsonAsync(string jsonPayload)
+        {
             await Task.Run(() =>
             {
                 Monitor.Enter(_dictionaryLock);
-                IEnumerable<Payload> payloads = JsonSerializer.Deserialize<IEnumerable<Payload>>(json, _jsonSerializerOptions) ?? throw new JsonException($"LoadFromFileAsync: cant deserialize payload at path [{path}] ");
-                _dictionary.Clear();
-                foreach (Payload item in payloads)
-                {
-                    // use ENG as key
-                    _dictionary[item.ENG] = item;
-                }
+                LoadFromJson(jsonPayload);
                 Monitor.Exit(_dictionaryLock);
-            });       
+            });
+        }
+        public void LoadFromJson(string jsonPayload)
+        {
+            IEnumerable<Payload> payloads = JsonSerializer.Deserialize<IEnumerable<Payload>>(jsonPayload, _jsonSerializerOptions) ?? throw new JsonException($"LoadFromJson: cant deserialize payload");
+            _dictionary.Clear();
+            foreach (Payload item in payloads)
+            {
+                // use ENG as key
+                _dictionary[item.ENG] = item;
+            }
         }
 
         public string? GetLocal(string key, Language language)
         {
-            if(_dictionary.TryGetValue(key,out Payload payload))
+            if (_dictionary.TryGetValue(key, out Payload payload))
             {
                 return language switch
                 {
@@ -98,12 +110,12 @@ namespace BlogApp.Infrastructures.Localization
         {
             switch (language)
             {
-                case Language.ENG: return "ltr";                
+                case Language.ENG: return "ltr";
                 case Language.FA: return "rtl";
 
                 default:
                     goto case Language.ENG;
- 
+
             }
         }
 

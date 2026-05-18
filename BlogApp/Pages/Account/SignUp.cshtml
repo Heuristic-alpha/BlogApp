@@ -1,8 +1,10 @@
 ﻿@page
 @model BlogApp.Pages.Account.SignUpModel
+@inject LocalManager LM
 @{
     ViewBag.Title = "SignUp";
     Layout = "_HomeLayout";
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();   
 }
 
 <partial name="_JqueryValidation" />
@@ -11,7 +13,7 @@
     <div class="row">
         <div class="col">
             <h1 class="bg-success text-light text-center m-3">
-                SignUp
+                @LM.GetLocalOrKey("SignUp", lang)
             </h1>
         </div>
     </div>
@@ -22,30 +24,30 @@
         <div class="col">
             <form method="post" asp-asp-page="SignUp" id="frm">
                 <div class="col form-control m-1">
-                    <label>UserName</label>
+                    <label>@LM.GetLocalOrKey("UserName", lang)</label>
                     <span class="text-danger" asp-validation-for="@Model.UserName"></span>
                     <input class="input-group-text form-text" asp-for="@Model.UserName" />
                 </div>
                 <div class="col form-control m-1">
-                    <label>Email</label>
+                    <label>@LM.GetLocalOrKey("Email", lang)</label>
                     <span class="text-danger" asp-validation-for="@Model.Email"></span>
                     <input class="input-group-text form-text" asp-for="@Model.Email" />
                 </div>
                 <div class="col form-control m-1">
-                    <label>Password</label>
+                    <label>@LM.GetLocalOrKey("Password", lang)</label>
                     <span class="text-danger" asp-validation-for="@Model.Password"></span>
                     <input class="input-group-text form-text" asp-for="@Model.Password" />
                 </div>
                 <div class="col form-control m-1">
-                    <label>Confirm Password</label>
+                    <label>@LM.GetLocalOrKey("Confirm Password", lang)</label>
                     <span class="text-danger" asp-validation-for="@Model.ConfirmPassword"></span>
                     <input class="input-group-text form-text" asp-for="@Model.ConfirmPassword" />
                 </div>
                 <div class="col form-control m-1">
-                    <label>Gender</label>
+                    <label>@LM.GetLocalOrKey("Gender", lang)</label>
                     <select class="form-select" asp-for="@Model.IsMale" >
-                        <option class="col-form-label m-3" value="true">Male <span><img class="m-3" src="@Model.GetIconPath(true)" alt="Icon" width="16" height="16"/></span> </option>
-                        <option class="col-form-label m-3" value="false">Female <span><img class="m-3" src="@Model.GetIconPath(false)" alt="Icon" width="16" height="16" /></span> </option>
+                        <option class="col-form-label m-3" value="true">@LM.GetLocalOrKey("Male", lang)<span><img class="m-3" src="@Model.GetIconPath(true)" alt="Icon" width="16" height="16" /></span> </option>
+                        <option class="col-form-label m-3" value="false">@LM.GetLocalOrKey("Female", lang)<span><img class="m-3" src="@Model.GetIconPath(false)" alt="Icon" width="16" height="16" /></span> </option>
                     </select>
                 </div>
             </form>
@@ -53,7 +55,7 @@
     </div>
     <div class="row m-2">
         <div class="col-2 btn-group">
-            <button type="submit" class="btn  btn-outline-success" form="frm">Sign Up</button>
+            <button type="submit" class="btn  btn-outline-success" form="frm">@LM.GetLocalOrKey("Make", lang)</button>
         </div>
     </div>
 </div>

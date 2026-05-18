@@ -1,0 +1,162 @@
+[
+  {
+    "ENG": "BlogApp",
+    "FA": "بلاگ اپ"
+  },
+  {
+    "ENG": "UserName",
+    "FA": "نام کاربری"
+  },
+  {
+    "ENG": "Password",
+    "FA": "رمز عبور"
+  },
+  {
+    "ENG": "Confirm Password",
+    "FA": "تکرار رمز عبور"
+  },
+  {
+    "ENG": "Gender",
+    "FA": "جنسیت"
+  },
+  {
+    "ENG": "Male",
+    "FA": "مرد"
+  },
+  {
+    "ENG": "Female",
+    "FA": "زن"
+  },
+  {
+    "ENG": "Email",
+    "FA": "ایمیل"
+  },
+  {
+    "ENG": "Blog",
+    "FA": "بلاگ"
+  },
+  {
+    "ENG": "Blogs",
+    "FA": "بلاگ ها"
+  },
+  {
+    "ENG": "Comment",
+    "FA": "کامنت"
+  },
+  {
+    "ENG": "Comments",
+    "FA": "کامنت ها"
+  },
+  {
+    "ENG": "Test",
+    "FA": "تست"
+  },
+  {
+    "ENG": "About",
+    "FA": "درباره"
+  },
+  {
+    "ENG": "Dashboard",
+    "FA": "داشبورد"
+  },
+  {
+    "ENG": "Login",
+    "FA": "ورود"
+  },
+  {
+    "ENG": "Logout",
+    "FA": "خروج"
+  },
+  {
+    "ENG": "You are not Logged in",
+    "FA": "شما وارد نشده اید"
+  },
+  {
+    "ENG": "See",
+    "FA": "مشاهده"
+  },
+  {
+    "ENG": "Public Blogs",
+    "FA": "بلاگ های عمومی"
+  },
+  {
+    "ENG": "Login To Get Started",
+    "FA": "برای شروع وارد شوید"
+  },
+  {
+    "ENG": "Is The Best Blog Web App In The World",
+    "FA": "بهترین برنامه وبلاگ در دنیاست"
+  },
+  {
+    "ENG": "Authored by",
+    "FA": "نوشته شده توسط"
+  },
+  {
+    "ENG": "at",
+    "FA": "در"
+  },
+  {
+    "ENG": "Back",
+    "FA": "برگشت"
+  },
+  {
+    "ENG": "Creation data",
+    "FA": "تاریخ ساخت"
+  },
+  {
+    "ENG": "Created by Hossein Sarlak as its first standalone WebApp.",
+    "FA": "ساخته شده توسط حسین سرلک به عنوان اولین برنامه وب مستقل."
+  },
+  {
+    "ENG": "Profile",
+    "FA": "پروفایل"
+  },
+  {
+    "ENG": "My Github Profile",
+    "FA": "پروفایل گیت‌هاب من"
+  },
+  {
+    "ENG": "Categories",
+    "FA": "دسته بندی ها"
+  },
+  {
+    "ENG": "Category",
+    "FA": "دسته بندی"
+  },
+  {
+    "ENG": "Logined user can post commnts on this blog",
+    "FA": "کاربران وارد شده میتوانند برای این وبلاگ نوشته بگذارند"
+  },
+  {
+    "ENG": "New Comment",
+    "FA": "کامنت جدید"
+  },
+  {
+    "ENG": "Add",
+    "FA": "اضافه کردن"
+  },
+  {
+    "ENG": "Make",
+    "FA": "ساختن"
+  },
+  {
+    "ENG": "No comment yet",
+    "FA": "کامنتی وجود ندارد"
+  },
+  {
+    "ENG": "If dont have account yet, create new one",
+    "FA": "اگر هیچ حساب کاربری نداری، یدونه جدید بساز"
+  },
+  {
+    "ENG": "SignUp",
+    "FA": "ساخت حساب کاربری"
+  },
+  {
+    "ENG": "Congrats! your account created successfully",
+    "FA": "تبریک! حساب شما با موفقیت ساخنه شد"
+  },
+  {
+    "ENG": "Now Login to your account using this button",
+    "FA": "اکنون با دکمه زیر وارد شوید"
+  }
+]

@@ -2,9 +2,7 @@
 @{
     Layout = "_HomeLayout";
     ViewBag.Title = "About";
-
-    Language language = Language.ENG;
-    if (Enum.TryParse<Language>(Context.Session.GetString(Constants.CookieNames.Language) ?? "ENG", true, out Language result)) { language = result; }
+    Language language = Html.ViewContext.HttpContext.GetCurrentLanguage();
 }
 
 <div class="container">
@@ -12,15 +10,15 @@
         <div class="col-2"></div>
         <div class="col text-center bg-black text-white align-content-center p-2 m-2">
             <h5 class="text-warning">@LM.GetLocalOrKey("About", language)</h5>
-            <h6>Created by Hossein Sarlak as its first standalone WebApp.</h6>
-            <h6>Creation data 05/04/2026</h6>
+            <h6>@LM.GetLocalOrKey("Created by Hossein Sarlak as its first standalone WebApp.", language)</h6>
+            <h6>@LM.GetLocalOrKey("Creation data", language) 05/04/2026</h6>
         </div>
         <div class="col-2"></div>
     </div>
     <div class="row">
         <div class="col-5"></div>
         <div class="col p-2 m-2">
-            My Github <a class="text-primary" href="https://github.com/Heuristic-alpha">Profile</a>
+            <a class="m-1 btn btn-outline-dark" href="https://github.com/Heuristic-alpha">@LM.GetLocalOrKey("My Github Profile", language) <span class="fa fa-code-branch"></span></a>
         </div>
         <div class="col-5"></div>
     </div>

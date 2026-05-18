@@ -11,8 +11,7 @@
     AppUser? appUser = Html.ViewContext.HttpContext.GetAppUser();
     string profilePictureURL = await userProfilePictureService.GetProfilePictureURLAsync(appUser?.AppUserId ?? default);
 
-    Language language = Language.ENG;
-    if (Enum.TryParse<Language>(Context.Session.GetString(Constants.CookieNames.Language) ?? "ENG", true, out Language result)) { language = result; }
+    Language language = Html.ViewContext.HttpContext.GetCurrentLanguage();
 }
 
 <!DOCTYPE html>

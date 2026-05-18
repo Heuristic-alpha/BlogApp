@@ -1,12 +1,13 @@
 ﻿@using System.Globalization
-
+@inject LocalManager LM
 @model Blog
 @{
     Layout = "_HomeLayout";
     ViewBag.Title = "View Public Blog";
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();   
 }
 
 <div class="m-2">
-    <a href="@ViewBag.ReturnUrl" class="m-2 btn btn-info">Back</a>
+    <a href="@ViewBag.ReturnUrl" class="m-2 btn btn-info">@LM.GetLocalOrKey("Back", lang)</a>
     <vc:render-blog blog="@Model" />
 </div>

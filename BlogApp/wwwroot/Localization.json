@@ -16,6 +16,10 @@
     "FA": "تکرار رمز عبور"
   },
   {
+    "ENG": "Description",
+    "FA": "توضیحات"
+  },
+  {
     "ENG": "Gender",
     "FA": "جنسیت"
   },
@@ -68,6 +72,10 @@
     "FA": "خروج"
   },
   {
+    "ENG": "Edit",
+    "FA": "ویرایش"
+  },
+  {
     "ENG": "You are not Logged in",
     "FA": "شما وارد نشده اید"
   },
@@ -100,7 +108,7 @@
     "FA": "برگشت"
   },
   {
-    "ENG": "Creation data",
+    "ENG": "Creation date",
     "FA": "تاریخ ساخت"
   },
   {
@@ -110,6 +118,18 @@
   {
     "ENG": "Profile",
     "FA": "پروفایل"
+  },
+  {
+    "ENG": "Profile Picture",
+    "FA": "تصویر پروفایل"
+  },
+  {
+    "ENG": "Should change profile picture",
+    "FA": "تصویر پروفایل تغییر کند"
+  },
+  {
+    "ENG": "Delete current picture",
+    "FA": "تصویر فعلی حدف شود"
   },
   {
     "ENG": "My Github Profile",
@@ -158,5 +178,77 @@
   {
     "ENG": "Now Login to your account using this button",
     "FA": "اکنون با دکمه زیر وارد شوید"
+  },
+  {
+    "ENG": "Like",
+    "FA": "دوست دارم"
+  },
+  {
+    "ENG": "Dislike",
+    "FA": "دوست ندارم"
+  },
+  {
+    "ENG": "Details",
+    "FA": "جزئیات"
+  },
+  {
+    "ENG": "Delete",
+    "FA": "حذف"
+  },
+  {
+    "ENG": "Blogs that are public and confirmed by admins, shows to public",
+    "FA": "بلاگ هایی که عمومی هستند و هم توسط ادمین ها تایید شده اند، به عموم نمایش داده خواهند شد"
+  },
+  {
+    "ENG": "Editing a confirmed Blog, change its confirmed state to false",
+    "FA": "ویرایش کردن وبلاگ از پیش تایید شده، آن را در وضعیت تایید نشده قرار می دهد"
+  },
+  {
+    "ENG": "Title",
+    "FA": "عنوان"
+  },
+  {
+    "ENG": "Content",
+    "FA": "محتوا"
+  },
+  {
+    "ENG": "Is Confirmed",
+    "FA": "تایید شده"
+  },
+  {
+    "ENG": "Is Public",
+    "FA": "به عموم نمایش داده شود"
+  },
+  {
+    "ENG": "List is empty",
+    "FA": "لیست خالی است"
+  },
+  {
+    "ENG": "Create",
+    "FA": "ساخت"
+  },
+  {
+    "ENG": "New",
+    "FA": "جدید"
+  },
+  {
+    "ENG": "There is no categories",
+    "FA": "هیچ دسته‌بندی وجود ندارد"
+  },
+  {
+    "ENG": "Only admins can confirm - editing a confirmed blog or change this property to false",
+    "FA": "فقط ادمین ها می توانند بلاگ ها را تایید کنند"
+  },
+  {
+    "ENG": "first",
+    "FA": "اولین"
+  },
+  {
+    "ENG": "last",
+    "FA": "آخرین"
+  },
+  {
+    "ENG": "Save",
+    "FA": "ذخیره"
   }
 ]

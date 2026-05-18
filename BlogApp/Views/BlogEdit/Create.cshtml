@@ -1,14 +1,16 @@
 ﻿@model EditBlogViewModel
+@inject LocalManager LM
 @{
     Layout = "_HomeLayout";
     ViewBag.Title = "Create Blog";
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();
 }
 
 <partial name="_JqueryValidation" />
 
 <div class="container p-2">
     <div class="row">
-        <div class="col bg-info text-secondary text-black align-content-center">Create new Blog</div>
+        <div class="col bg-info text-secondary text-black align-content-center">@LM.GetLocalOrKey("Create", lang) @LM.GetLocalOrKey("Blog", lang)</div>
     </div>
     <div class="row">
         <div class="col text-danger" asp-validation-summary="ModelOnly"></div>
@@ -19,25 +21,21 @@
             <input hidden asp-for="@Model.Blog.CreationDateTime" />
             <input hidden asp-for="@Model.Blog.AppUserId" />
             <div class="col form-control m-2">
-                <label>Title</label>
+                <label>@LM.GetLocalOrKey("Title", lang)</label>
                 <span class="text-danger" asp-validation-for="@Model.Blog.Title"></span>
                 <input class="input-group-text form-text" asp-for="@Model.Blog.Title" />
             </div>
             <div class="col form-control m-2">
-                <label>Text</label>
+                <label>@LM.GetLocalOrKey("Content", lang)</label>
                 <span class="text-danger" asp-validation-for="@Model.Blog.BlogContent"></span>
                 <textarea class="form-control-plaintext input-group-text text-start" asp-for="@Model.Blog.BlogContent"></textarea>
-            </div>
-            @* <div class="col form-control m-2">
-                <label>Is Confirmed? (only admins can confirm)</label>
-                <input asp-for="@Model.Blog.IsConfirmed" disabled />
-            </div> *@
+            </div>          
             <div class="col form-control m-2">
-                <label>Is public?</label>
+                <label>@LM.GetLocalOrKey("Is Public", lang)?</label>
                 <input asp-for="@Model.Blog.IsPublic" />
             </div>
             <div class="col form-control m-2">
-                <h4 class="m-2 bg-primary text-black text-center">Categories</h4>
+                <h4 class="m-2 bg-primary text-black text-center">@LM.GetLocalOrKey("Categories", lang)</h4>
                 <div class="m-2 bg-secondary bg-opacity-25">
                     @if (Model.CategoryNames.Any())
                     {
@@ -52,7 +50,7 @@
                     }
                     else
                     {
-                        <p class="text-danger">There is no categories</p>
+                        <p class="text-danger">@LM.GetLocalOrKey("There is no categories", lang)</p>
                     }
                 </div>              
             </div>
@@ -61,8 +59,8 @@
     <div class="row m-2 p-2 align-content-center">
         <div class="col"></div>
         <div class="col">
-            <a class="btn btn-outline-secondary" href="@(Url.Content((string?)TempData["ReturnUrl"] ?? "BlogEdit/Index"))">Return</a>
-            <button class="btn btn-outline-primary" form="form" type="submit">Create</button>
+            <a class="btn btn-outline-secondary" href="@(Url.Content((string?)TempData["ReturnUrl"] ?? "BlogEdit/Index"))">@LM.GetLocalOrKey("Back", lang)</a>
+            <button class="btn btn-outline-primary" form="form" type="submit">@LM.GetLocalOrKey("Create", lang)</button>
         </div>         
         <div class="col"></div>
     </div>

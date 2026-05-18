@@ -7,11 +7,13 @@
 
 @inject UrlLocator urlLocator
 @inject UserProfilePictureService profilePictureService
+@inject LocalManager LM
 
 @model Comment?
 
 @{
     IdentityAppUser? identityAppUser = Html.ViewContext.HttpContext.GetIdentityAppUser();
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();
 }
 
 @if (Model == null)
@@ -48,7 +50,7 @@ else
                             <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
                             <input hidden name="VoteType" value="@(VoteType.Like)" />
                             <input hidden name="ReturnUrl" value="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()" />
-                            <button class="btn btn-outline-success m-2">Like</button>
+                            <button class="btn btn-outline-success m-2">@LM.GetLocalOrKey("Like",lang)</button>
                         </form>
                     }
                 </span>
@@ -65,7 +67,7 @@ else
                             <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
                             <input hidden name="VoteType" value="@(VoteType.Dislike)" />
                             <input hidden name="ReturnUrl" value="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()" />
-                            <button class="btn btn-outline-danger m-2">Dislike</button>
+                            <button class="btn btn-outline-danger m-2">@LM.GetLocalOrKey("Dislike", lang)</button>
                         </form>
                     }
                 </span>

@@ -1,26 +1,27 @@
 ﻿@page "{id:long}"
 @model BlogApp.Pages.Profile.ViewModel
 @inject UserProfilePictureService profilePictureService
-
+@inject LocalManager LM
 @{
     ViewBag.Title = "Profile View";
     Layout = "_HomeLayout";
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();
 }
 
 <div class="m-2 bg-info bg-opacity-25 border border-4 border-info">
-    <h1 class="m-2 bg-info text-black text-center">User Profile</h1>
+    <h1 class="m-2 bg-info text-black text-center">@LM.GetLocalOrKey("Profile", lang)</h1>
     <div class="m-2">
         <div class="form-control m-2">
             <img class="m-2" src="@(Url.Content(profilePictureService.GetProfilePictureURL(Model.AppUser)))" alt="User Icon" height="64" width="64" />
         </div>
         
         <div class="form-control m-2">
-                <label class="m-1">UserName</label>
+            <label class="m-1">@LM.GetLocalOrKey("UserName", lang)</label>
                 <input class="input-group-text form-text m-2" asp-for="@Model.UserName" readonly />
             </div>
            
             <div class="form-control m-2">
-                <label class="m-1">Description</label>
+            <label class="m-1">@LM.GetLocalOrKey("Description", lang)</label>
                 <textarea class="form-control-plaintext input-group-text text-start" asp-for="@Model.Description" readonly></textarea>
             </div>
             

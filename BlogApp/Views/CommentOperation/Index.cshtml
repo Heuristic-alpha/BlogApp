@@ -1,25 +1,26 @@
 ﻿@inject ILogger< PaginateItemsViewModel<Comment>> Logger
 @inject UrlLocator urlLocator
+@inject LocalManager LM
 @model PaginateItemsViewModel<Comment>
 @{
     const int MAX_CONTENT_LENGTH = 50;
     Layout = "_HomeLayout";
     ViewBag.Title = "List of user Comment";
-    TempData["ReturnUrl"] = Html.ViewContext.HttpContext.Request.Path.ToUriComponent() + Html.ViewContext.HttpContext.Request.QueryString.ToString();
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();
+    TempData["ReturnUrl"] = Html.ViewContext.HttpContext.Request.GetPathWithQuery();
 }
 
 <div class="container-md">
     <div class="row bg-white align-items-center">
-        <h1 class="col-12 bg-info text-black text-center">My Comments</h1>
+        <h1 class="col-12 bg-info text-black text-center">@LM.GetLocalOrKey("Comments", lang)</h1>
     </div>
     <div class="row row-cols-md-1 bg-light">
-        <div class="bg-secondary text-light text-center">List of all Comments:</div>
         <table class="table table-bordered table-hover">
             <thead>
                 <tr class="d-md-table-row">
-                    <th>Blog Tile</th>
-                    <th>Comment Content</th>
-                    <th>Creation Date</th>
+                    <th>@LM.GetLocalOrKey("Blog", lang) @LM.GetLocalOrKey("Title", lang)</th>
+                    <th>@LM.GetLocalOrKey("Content", lang)</th>
+                    <th>@LM.GetLocalOrKey("Creation date", lang)</th>
                     <th></th>
                 </tr>
             </thead>
@@ -35,7 +36,7 @@
                                 <span>                                 
                                     <form method="post" asp-action="Delete">
                                         <input hidden name="id" value="@Model.SelectedItems[i].CommentId" />
-                                        <button class="btn btn-outline-danger m-1" type="submit">Delete</button>
+                                        <button class="btn btn-outline-danger m-1" type="submit">@LM.GetLocalOrKey("Delete", lang)</button>
                                     </form> 
                                 </span>
                             </td>
@@ -43,7 +44,7 @@
                     }
                 else
                 {
-                    <tr><td class="text-center text-danger">List is empty</td></tr>
+                    <tr><td class="text-center text-danger">@LM.GetLocalOrKey("List is empty", lang)</td></tr>
                 }
             </tbody>
         </table>

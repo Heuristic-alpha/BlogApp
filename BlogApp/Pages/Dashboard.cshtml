@@ -1,35 +1,37 @@
 ﻿@page
 @model BlogApp.Pages.DashboardModel
+@inject LocalManager LM
 @{
     ViewBag.Title = "Dashboard";
     Layout = "_HomeLayout";
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();
 }
 
 <div class="m-2 border border-5 border-secondary">
-    <h2 class="m-2 bg-secondary bg-opacity-50 text-black text-center">My Profile
+    <h2 class="m-2 bg-secondary bg-opacity-50 text-black text-center">@LM.GetLocalOrKey("Profile",lang)
         <span class="m-1"><span class="fa fa-user-alt"></span></span>
     </h2>
     <div class="m-2 bg-primary bg-opacity-25">
         <div class="m-2 border border-1 border-dark">
             <span class="m-2">
-                <label class="m-2">UserName:</label>
+                <label class="m-2">@LM.GetLocalOrKey("UserName", lang):</label>
                 <input type="text" class="input-group-text form-text m-2" name="userName" value="@Model.IdentityAppUser!.UserName" readonly />
             </span>
         </div>
         <div class="m-2 border border-1 border-dark">
             <span class="m-2">
-                <label class="m-2">Email:</label>
+                <label class="m-2">@LM.GetLocalOrKey("Email", lang):</label>
                 <input type="text" class="input-group-text form-text m-2" name="email" value="@Model.IdentityAppUser!.Email" readonly />
             </span>
         </div>
         <div class="m-2 border border-1 border-dark">
             <span class="m-2">
-                <label class="m-2">Description:</label>
+                <label class="m-2">@LM.GetLocalOrKey("Description", lang):</label>
                 <input type="text" class="m-2 form-control-plaintext input-group-text text-start" name="description" value="@Model.AppUser!.Description" readonly />
             </span>
         </div>
-        <a asp-page="/Account/Logout" class="btn btn-danger m-2">Logout</a>
-        <a asp-page="/Profile/Edit" class="btn btn-warning m-2">Edit</a>
+        <a asp-page="/Account/Logout" class="btn btn-danger m-2">@LM.GetLocalOrKey("Logout", lang)</a>
+        <a asp-page="/Profile/Edit" class="btn btn-warning m-2">@LM.GetLocalOrKey("Edit", lang)</a>
     </div>
 </div>
 <div class="m-5">
@@ -39,14 +41,15 @@
     @*Blank*@
 </div>
 <div class="m-2 border border-5 border-secondary">
-    <h2 class="m-2 bg-secondary bg-opacity-50 text-black text-center">My Blogs
+    <h2 class="m-2 bg-secondary bg-opacity-50 text-black text-center">
+        @LM.GetLocalOrKey("Blogs", lang)
         <span class="m-1"><span class="fa fa-blog"></span></span>
     </h2>
     <div class="m-2 bg-primary bg-opacity-25">
         <div class="m-2">
             <span class="m-2">
-                <a asp-controller="BlogEdit" asp-Action="Index" class="btn btn-warning m-4">Goto Details</a>
-                <a asp-page="/Dashboard" asp-route-canShowBlogs="true" class="btn btn-info m-4">Show Blogs</a>
+                <a asp-controller="BlogEdit" asp-Action="Index" class="btn btn-warning m-4">@LM.GetLocalOrKey("See", lang) @LM.GetLocalOrKey("Details", lang)</a>
+                <a asp-page="/Dashboard" asp-route-canShowBlogs="true" class="btn btn-info m-4">@LM.GetLocalOrKey("Blogs", lang)</a>
             </span>
             @if (Model.CanShowBlogs)
             {
@@ -59,7 +62,7 @@
                             Blog blog = Model.UserBlogs[curentI];
 
                             <div class="m-2 bg-warning bg-opacity-25 border border-2 border-success">
-                                <h2 class="m-2 text-black text-center bg-danger bg-opacity-50">Blog #@(i+1)</h2>
+                                <h2 class="m-2 text-black text-center bg-danger bg-opacity-50">@LM.GetLocalOrKey("Blog", lang) #@(i + 1)</h2>
                                 <vc:render-blog blog="@blog" />
                             </div>
                         }
@@ -81,14 +84,15 @@
     @*Blank*@
 </div>
 <div class="m-2 border border-5 border-secondary">
-    <h2 class="m-2 bg-secondary bg-opacity-50 text-black text-center">My Comments
+    <h2 class="m-2 bg-secondary bg-opacity-50 text-black text-center">
+        @LM.GetLocalOrKey("Comments", lang)
         <span class="m-1"><span class="fa fa-comment"></span></span>
     </h2>
     <div class="m-2 bg-primary bg-opacity-25">
         <div class="m-2">
             <span class="m-2">
-                <a asp-controller="CommentOperation" asp-Action="Index" class="btn btn-warning m-4">Goto Details</a>
-                <a asp-page="/Dashboard" asp-route-canShowComments="true" class="btn btn-info m-4">Show Comments</a>
+                <a asp-controller="CommentOperation" asp-Action="Index" class="btn btn-warning m-4">@LM.GetLocalOrKey("See", lang) @LM.GetLocalOrKey("Details", lang)</a>
+                <a asp-page="/Dashboard" asp-route-canShowComments="true" class="btn btn-info m-4">@LM.GetLocalOrKey("Comments", lang)</a>
             </span>
             @if (Model.CanShowComments)
             {

@@ -2,13 +2,18 @@
 @using BlogApp.Models
 @using BlogApp.ViewModels
 @model PaginationViewModel
+@inject LocalManager LM
+
+@{
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();
+}
 
 <div class="container">
     <div class="row bg-secondary btn-group">
         <span class="border ">
-        @if(Model.CurrentPage != 1)
+        @if (Model.CurrentPage != 1 && Model.TotalCount != 0)
         {
-            <a class="m-2 text-warning" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = 1, size = Model.PageSize }))">@("first")</a>
+            <a class="m-2 text-warning" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = 1, size = Model.PageSize }))">@LM.GetLocalOrKey("first", lang)</a>
         }       
         @if (Model.HasPrevPage)
         {
@@ -22,9 +27,9 @@
         {
             <a class="m-2 text-white" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = Model.CurrentPage + 1, size = Model.PageSize }))">@(">")</a>
         }
-        @if (Model.CurrentPage != Model.TotalPage)
+        @if (Model.CurrentPage != Model.TotalPage && Model.TotalCount != 0)
         {
-            <a class="m-2 text-warning" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = Model.TotalPage, size = Model.PageSize }))">@("last")</a>
+            <a class="m-2 text-warning" href="@(Url.ActionLink(Model.ActionName, Model.ControllerName, new { page = Model.TotalPage, size = Model.PageSize }))">@LM.GetLocalOrKey("last", lang)</a>
         }
         </span>
     </div>

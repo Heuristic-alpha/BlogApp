@@ -71,8 +71,8 @@ else
                         <input hidden name="BlogId" value="@Model.BlogId" />
                         <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
                         <input hidden name="ReturnUrl" value="@Context.Request.GetPathWithQuery()" />
-                        <textarea class="m-2 form-control-plaintext input-group-text text-start bg-info bg-opacity-50 text-secondary" name="Text"></textarea>
-                        <button class="btn btn-outline-warning m-2">@LM.GetLocalOrKey("Make", lang)</button>
+                        <textarea class="m-2 form-control-plaintext input-group-text text-start bg-info bg-opacity-25 text-dark" name="Text"></textarea>
+                        <button class="btn btn-outline-light m-2">@LM.GetLocalOrKey("Make", lang)</button>
                     </form>
                 }
             </div>

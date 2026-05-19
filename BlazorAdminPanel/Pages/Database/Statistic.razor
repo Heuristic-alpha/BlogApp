@@ -7,7 +7,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-12 col-md-6 col-lg-4 m-2">
+        <div class="col-12 col-md-12 col-lg-6 m-2">
             <table class="table table-bordered table-hover table-info">
                 <thead>
                     <tr class="text-center">
@@ -51,8 +51,18 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-6 m-2">
-            
+        <div class="col-12 col-md-12 col-lg-12 m-2 bg-success bg-opacity-25 border border-2 border-success">
+            <p class="m-2">- This project contains 2 Database: 1-<span class="text-danger">Identity DbContext</span> and 2-<span class="text-danger">Data DbContext</span> .</p>
+            <p class="m-2">- <span class="text-danger">Identity DbContext</span> Contains information about users identities, also contains <span class="text-primary">Identity Users</span> .</p>
+            <p class="m-2">- <span class="text-danger">Data DbContext</span> Contains all Application data, also contains <span class="text-primary">App Users</span> .</p>
+            <p class="m-2">- Counts of <span class="text-primary">App Users</span> and <span class="text-primary">Identity Users</span> should be equal, if they are not then it is a problem. </p>
+        </div>
+        <div class="col-12 col-md-12 col-lg-12 m-2 bg-warning bg-opacity-25 border border-2 border-warning">
+            <p class="m-2">- <span class="text-primary">Blogs</span> depend on AppUsers, if AppUser deleted, then Blogs that depend on that AppUser also will be deleted.</p>
+            <p class="m-2">- <span class="text-primary">Comments</span> depend on AppUsers and Blogs, if AppUser or Blog deleted, then Comments that depend on that AppUser or Blog also will be deleted.</p>           
+            <p class="m-2">- <span class="text-primary">AppUserComments</span> are joint table of AppUsers with Comments that depend on them, if AppUser or Comment deleted, then AppUserComments that depend on them also will be deleted.</p>
+            <p class="m-2">- <span class="text-primary">AppUserComments</span> contains Comment votes </p>
+            <p class="m-2">- <span class="text-primary">BlogCategories</span> are joint table of Blogs with Categories that depend on them, if Blog or Category deleted, then BlogCategories that depend on them also will be deleted.</p>
         </div>
     </div>  
 </div>

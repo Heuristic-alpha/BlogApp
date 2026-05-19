@@ -7,7 +7,7 @@
             @{
                 int totalPage = TotalPage;
             }
-            @if (CurrentPage != 1)
+            @if (CurrentPage != 1 && totalPage != 0)
             {
                 <button class="btn m-2 text-danger" @onclick="() => SetCurrentPageAndUpdateAsync(1)">@("<<")</button>
             }
@@ -24,7 +24,7 @@
             {
                 <button class="btn m-2 text-danger" @onclick="() => SetCurrentPageAndUpdateAsync(CurrentPage + 1)">@(">")</button>
             }
-            @if (CurrentPage != totalPage)
+            @if (CurrentPage != totalPage && totalPage != 0)
             {
                 <button class="btn m-2 text-danger" @onclick="() => SetCurrentPageAndUpdateAsync(totalPage)">@(">>")</button>
             }

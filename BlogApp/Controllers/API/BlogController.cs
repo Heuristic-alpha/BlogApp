@@ -104,7 +104,13 @@ namespace BlogApp.Controllers
         {
             if (blog != null && blog.BlogId == default)
             {
-                // first create blog then query it's PK and assigned to BlogCategories, then add them to database:
+                // first: check AppUserId is not exist:
+                if(!(await _dataDbContext.AppUsers.AnyAsync(au => au.AppUserId == blog.AppUserId)))
+                {
+                    return BadRequest($"AppUserId [{blog.AppUserId}] is not exist");
+                }
+
+                // second: create blog then query it's PK and assigned to BlogCategories, then add them to database:
                 IEnumerable<BlogCategory> blogCategories = blog.BlogCategories ?? Enumerable.Empty<BlogCategory>();
                 blog.BlogCategories = null;
                 var blogEntry = await _dataDbContext.Blogs.AddAsync(blog);
@@ -127,6 +133,12 @@ namespace BlogApp.Controllers
         {
             if (blog != null && blog.BlogId != default)
             {
+                // first: check AppUserId is not exist:
+                if (!(await _dataDbContext.AppUsers.AnyAsync(au => au.AppUserId == blog.AppUserId)))
+                {
+                    return BadRequest($"AppUserId [{blog.AppUserId}] is not exist");
+                }
+
                 // Resolve EF Core cyclic problems
                 blog.AppUser = null;
                 blog.Comments = null;
@@ -161,8 +173,8 @@ namespace BlogApp.Controllers
             if (id != default)
             {
                 Blog? blog = await _dataDbContext.Blogs.Include(t => t.Comments!)
-                                                   .ThenInclude(c => c.AppUserCommnets)
-                                                   .FirstOrDefaultAsync(t => t.BlogId == id);
+                                                       .ThenInclude(c => c.AppUserCommnets)
+                                                       .FirstOrDefaultAsync(t => t.BlogId == id);
                 if (blog != null)
                 {
                     // delete all its dependants
@@ -178,6 +190,10 @@ namespace BlogApp.Controllers
                     _dataDbContext.Blogs.Remove(blog);
                     await _dataDbContext.SaveChangesAsync();
                     return Ok();
+                }
+                else
+                {
+                    return NotFound($"Blog with id[{id}] not found to be deleted");
                 }
             }
             return BadRequest();

@@ -81,7 +81,7 @@
     private string _createCategoryError = string.Empty;
 
     protected override async Task OnInitializedAsync()
-    {      
+    {     
         await UpdateListAsync();
     }
 
@@ -111,6 +111,7 @@
         {
             // clear name field after creating it
             NewCategory.Name = string.Empty;
+            _createCategoryError = string.Empty;
             await UpdateListAsync();
         }
         else

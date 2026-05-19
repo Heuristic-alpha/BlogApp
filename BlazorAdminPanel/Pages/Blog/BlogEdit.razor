@@ -3,6 +3,7 @@
 
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Blog @Mode.ToString()</PageTitle>
 <h1 class="bg-warning text-black text-center">Blog @Mode.ToString()</h1>
@@ -127,6 +128,10 @@
         {
             var response = await Http.PostAsJsonAsync<Blog>("/api/Blog/Create", Blog);
             if (response.IsSuccessStatusCode) Navigation.NavigateTo("blog/list");
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+            }
         }
         else if (Mode == ActionMode.Update)
         {
@@ -135,6 +140,10 @@
                     
             var response = await Http.PutAsJsonAsync<Blog>("/api/Blog/Update", Blog);
             if (response.IsSuccessStatusCode) Navigation.NavigateTo("blog/list");
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+            }
         }
     }
 }

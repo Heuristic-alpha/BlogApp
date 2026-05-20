@@ -34,6 +34,7 @@ namespace BlogApp.Controllers
             dataBaseStatistic.AppUserCommentsCount = await _dataDbContext.AppUserComments.CountAsync();
             dataBaseStatistic.CategoriesCount = await _dataDbContext.Categories.CountAsync();
             dataBaseStatistic.BlogCategoriesCount = await _dataDbContext.BlogCategories.CountAsync();
+            dataBaseStatistic.AppUserBlogsCount = await _dataDbContext.AppUserBlogs.CountAsync();
 
             return Ok(dataBaseStatistic);
         }

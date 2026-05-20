@@ -1,5 +1,7 @@
 ﻿@using BlogApp.Infrastructures
 @using BlogApp.Models
+@using BlogApp.Models.Enums
+@using BlogApp.Models.JoinModels
 @using BlogApp.ViewModels
 @using Microsoft.AspNetCore.Identity
 @model Blog
@@ -10,13 +12,18 @@
     string[] lines = Model.BlogContent.Split('\n', StringSplitOptions.None);
 
     string[] categories = null!;
-    if(TempData.TryGetValue("Categories", out object? value))
+    if(TempData.TryGetValue("Categories", out object? value1))
     {
-        categories = (string[])value!;
+        categories = (string[])value1!;
     }
 
-    Language lang = Language.ENG;
-    if (Enum.TryParse<Language>(Context.Session.GetString(Constants.CookieNames.Language) ?? "ENG", true, out Language result)) { lang = result; }
+    AppUserBlog? currentAppUserBlog = null;
+    if (TempData.TryGetValue("CurrentAppUserBlog", out object? value2))
+    {
+        currentAppUserBlog = (AppUserBlog)value2!;
+    }
+
+    Language lang = Html.ViewContext.HttpContext.GetCurrentLanguage();   
 }
 
 @if (@Model == null)
@@ -52,6 +59,26 @@ else
                         }
                     </div>
                 }
+                <div class="m-2 bg-warning bg-opacity-25 border border-1 border-success align-items-center text-center">
+                    <span class="text-dark">@LM.GetLocalOrKey("Do you like this blog?", lang)</span>
+                    @if(identityAppUser != null)
+                    {
+                        <form method="post" asp-controller="BlogEdit" asp-action="VoteAndReload">
+                            <input hidden name="BlogId" value="@Model.BlogId" />
+                            <input hidden name="AppUserId" value="@identityAppUser.AppUserId" />
+                            <input hidden name="VoteType" value="@(currentAppUserBlog != null ? Reverse(currentAppUserBlog.VoteType) : VoteType.Like)" />
+                            <input hidden name="ReturnUrl" value="@Html.ViewContext.HttpContext.Request.GetPathWithQuery()" />
+                            <button class="m-2 btn">
+                                <img src="@GetHeartIcon(currentAppUserBlog)" alt="Heart icon" width="32" height="32" />
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span>@LM.GetLocalOrKey("login to vote", lang)</span>
+                    }
+                    <span class="text-danger m-2">@LM.GetLocalOrKey("Like", lang) (@Model.Like)</span>
+                </div>
             </div>
             <div class="col-1"></div>
         </div>
@@ -65,15 +92,22 @@ else
                 }
                 else
                 {
-                    @* Write new comment *@
-                    <label class="m-2 text-primary">@LM.GetLocalOrKey("New Comment", lang):</label>
-                    <form method="post" asp-controller="CommentOperation" asp-action="AddAndReload">
-                        <input hidden name="BlogId" value="@Model.BlogId" />
-                        <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
-                        <input hidden name="ReturnUrl" value="@Context.Request.GetPathWithQuery()" />
-                        <textarea class="m-2 form-control-plaintext input-group-text text-start bg-info bg-opacity-25 text-dark" name="Text"></textarea>
-                        <button class="btn btn-outline-light m-2">@LM.GetLocalOrKey("Make", lang)</button>
-                    </form>
+                    if (currentAppUserBlog != null && currentAppUserBlog.CommentId != null)
+                    {
+                        <p class="m-2">- @LM.GetLocalOrKey("Dear user, you have already a comment on this blog. You cant add new comment anymore.", lang)</p>
+                    }
+                    else
+                    {
+                        @* Write new comment *@
+                        <label class="m-2 text-primary">@LM.GetLocalOrKey("New Comment", lang):</label>
+                        <form method="post" asp-controller="CommentOperation" asp-action="AddAndReload">
+                            <input hidden name="BlogId" value="@Model.BlogId" />
+                            <input hidden name="AppUserId" value="@(identityAppUser?.AppUserId ?? 0)" />
+                            <input hidden name="ReturnUrl" value="@Context.Request.GetPathWithQuery()" />
+                            <textarea class="m-2 form-control-plaintext input-group-text text-start bg-white text-dark" name="Text"></textarea>
+                            <button class="btn btn-outline-dark m-2">@LM.GetLocalOrKey("Add", lang)</button>
+                        </form>
+                    }
                 }
             </div>
             <div class="col-1"></div>
@@ -102,6 +136,20 @@ else
 
 @functions
 {
+    public string GetHeartIcon(AppUserBlog? appUserBlog)
+    {       
+        if (appUserBlog != null && appUserBlog.VoteType == BlogApp.Models.Enums.VoteType.Like)
+        {
+            return Url.Content(Constants.StaticImagesURL.HeartIcon);
+        }
+        return Url.Content(Constants.StaticImagesURL.UnHeartIcon);
+    }
+
+    public VoteType Reverse(VoteType vote)
+    {
+        return vote == VoteType.Like ? VoteType.Dislike : VoteType.Like;
+    }
+
     // public string GetReturnUrl()
     // {
     //     HttpRequest httpRequest = Html.ViewContext.HttpContext.Request;

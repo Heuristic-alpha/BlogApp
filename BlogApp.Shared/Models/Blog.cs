@@ -21,6 +21,8 @@ namespace BlogApp.Models
 
         public DateTime CreationDateTime { get; set; } = DateTime.Now;
 
+        public int Like => AppUserBlogs?.Count(aub => aub.VoteType == Enums.VoteType.Like) ?? -1;
+
         /// <summary>
         /// A nav link to user that own this Blog
         /// </summary>
@@ -36,5 +38,10 @@ namespace BlogApp.Models
         /// A nav link to its categories
         /// </summary>
         public virtual IEnumerable<BlogCategory>? BlogCategories { get; set; }
+
+        /// <summary>
+        /// Navigation property to Blog vote and comment (join table)
+        /// </summary>
+        public virtual IEnumerable<AppUserBlog>? AppUserBlogs { get; set; }
     }
 }

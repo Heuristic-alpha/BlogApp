@@ -9,13 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\games\**" />
-    <Content Remove="wwwroot\games\**" />
-    <EmbeddedResource Remove="wwwroot\games\**" />
-    <None Remove="wwwroot\games\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="AppIcon.ico" />
   </ItemGroup>
 

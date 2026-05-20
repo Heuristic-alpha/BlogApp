@@ -46,7 +46,8 @@
                     </select>
                 </form>
                 <a class="btn btn-outline-light" asp-controller="Home" asp-action="About">@LM.GetLocalOrKey("About",language)</a>
-                <component type="@typeof(BlogApp.Blazor.RealTimeWatch)" render-mode="Server" param-UpdateInterval="500" />
+                <div class="bg-dark text-white text-center border border-1 border-light m-2" id="RealTimeWatch"></div>
+                @* <component type="@typeof(BlogApp.Blazor.RealTimeWatch)" render-mode="Server" param-UpdateInterval="500" /> *@
             </div>
             <div class="col">
                 <a class="btn fs-2 text-light animation-fadeOutIn-1" asp-controller="Home" asp-action="Index"><h2><b>@LM.GetLocalOrKey("BlogApp", language)</b></h2></a>
@@ -81,14 +82,27 @@
                     <div class="m-2">
                         <a asp-page="/Account/Login" class="btn btn-outline-warning">@LM.GetLocalOrKey("Login", language)</a>
                     </div>
-                }
-                
+                }                
             </div>
         </div>
     </div>
     <div>       
         @RenderBody()
-        <script src="_framework/blazor.server.js"></script>
+        @* <script src="_framework/blazor.server.js"></script> *@
+
+        <script> // this script update time:
+            document.addEventListener("DOMContentLoaded",()=>
+            {
+                let watch = document.getElementById("RealTimeWatch");
+                window.setInterval(updateDate, 250);
+
+                function updateDate()
+                {
+                    const d = new Date();
+                    watch.innerHTML = d.toLocaleDateString() +' '+ d.toLocaleTimeString();
+                }
+            });           
+        </script>
     </div>
 </body>
 </html>

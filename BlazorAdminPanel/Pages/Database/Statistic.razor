@@ -8,7 +8,7 @@
 <div class="container">
     <div class="row">
         <div class="col-12 col-md-12 col-lg-6 m-2">
-            <table class="table table-bordered table-hover table-info">
+            <table class="table table-bordered table-hover table-info bg-opacity-50">
                 <thead>
                     <tr class="text-center">
                         <th>Table</th>
@@ -45,6 +45,10 @@
                         <td>@dataBaseStatistic?.AppUserCommentsCount</td>
                     </tr>
                     <tr class="text-center">
+                        <td>AppUserBlogs</td>
+                        <td>@dataBaseStatistic?.AppUserBlogsCount</td>
+                    </tr>
+                    <tr class="text-center">
                         <td>BlogCategories</td>
                         <td>@dataBaseStatistic?.BlogCategoriesCount</td>
                     </tr>
@@ -62,6 +66,8 @@
             <p class="m-2">- <span class="text-primary">Comments</span> depend on AppUsers and Blogs, if AppUser or Blog deleted, then Comments that depend on that AppUser or Blog also will be deleted.</p>           
             <p class="m-2">- <span class="text-primary">AppUserComments</span> are joint table of AppUsers with Comments that depend on them, if AppUser or Comment deleted, then AppUserComments that depend on them also will be deleted.</p>
             <p class="m-2">- <span class="text-primary">AppUserComments</span> contains Comment votes </p>
+            <p class="m-2">- <span class="text-primary">AppUserBlogs</span> are joint table of AppUsers with Blogs that depend on them, if AppUser or Blog deleted, then AppUserBlogs that depend on them also will be deleted.</p>
+            <p class="m-2">- <span class="text-primary">AppUserBlogs</span> contains Blog votes </p>
             <p class="m-2">- <span class="text-primary">BlogCategories</span> are joint table of Blogs with Categories that depend on them, if Blog or Category deleted, then BlogCategories that depend on them also will be deleted.</p>
         </div>
     </div>  

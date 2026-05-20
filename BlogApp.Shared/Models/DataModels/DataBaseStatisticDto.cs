@@ -10,5 +10,6 @@
         public int CategoriesCount { get; set; }
         public int AppUserCommentsCount { get; set; }
         public int BlogCategoriesCount { get; set; }
+        public int AppUserBlogsCount { get; set; }
     }
 }

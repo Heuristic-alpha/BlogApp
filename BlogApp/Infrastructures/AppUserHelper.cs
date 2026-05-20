@@ -75,35 +75,14 @@ namespace BlogApp.Infrastructures
             }
         }
 
-        //public static async Task<bool> TryDeleteUserAsync(UserManager<IdentityAppUser> userManager,
-        //                                                  DataDbContext dbContext,
-        //                                                  UserProfilePictureService profilePictureService,
-        //                                                  string email)
-        //{
-        //    IdentityAppUser? identity = await userManager.FindByEmailAsync(email);
-        //    if (identity != null)
-        //    {
-        //        var result = await userManager.DeleteAsync(identity);
-        //        if (result != null)
-        //        {
-        //            AppUser? user = await dbContext.AppUsers.FirstOrDefaultAsync(a => a.AppIdentityId == identity.Id);
-        //            dbContext.AppUsers.Remove(user!);
-        //            await dbContext.SaveChangesAsync();
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
         public static async Task<bool> TryDeleteUserAsync(UserManager<IdentityAppUser> userManager,
                                                           DataDbContext dbContext,
                                                           UserProfilePictureService profilePictureService,
                                                           long appUserId)
         {
             // Query and delete object and all it dependents
-            AppUser? appUser = await dbContext.AppUsers.Include(a => a.AppUserCommnets)
-                                                       .Include(a => a.Blogs)
+            AppUser? appUser = await dbContext.AppUsers.Include(a => a.Blogs)
                                                        .Include(a => a.Comments)
-                                                       .AsSplitQuery()
                                                        .FirstOrDefaultAsync(au => au.AppUserId == appUserId);
             if (appUser != null)
             {

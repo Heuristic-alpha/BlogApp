@@ -1,4 +1,5 @@
 ﻿using BlogApp.Models;
+using BlogApp.Models.DataModels;
 using BlogApp.Models.JoinModels;
 
 namespace BlogApp.Controllers
@@ -223,6 +224,42 @@ namespace BlogApp.Controllers
             }
             else return NotFound();
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VoteAndReload([FromForm] BlogVoteDto voteDto)
+        {
+            IdentityAppUser? identityAppUser = HttpContext.GetIdentityAppUser();
+            if (identityAppUser == null) return RedirectToPage("/Account/AccessDenied");
+
+            if (voteDto.AppUserId != identityAppUser.AppUserId) return RedirectToPage("/Account/AccessDenied");
+
+            if (!ModelState.IsValid) return Redirect(voteDto.ReturnUrl);
+
+            Blog? blog = await _dataDbContext.Blogs.FirstOrDefaultAsync(b => b.BlogId == voteDto.BlogId);
+            AppUser? appUser = HttpContext.GetAppUser();
+
+            if (appUser != null && blog != null)
+            {
+                AppUserBlog? blogVote = await _dataDbContext.AppUserBlogs.FirstOrDefaultAsync(bv => bv.BlogId == voteDto.BlogId && bv.AppUserId == voteDto.AppUserId);
+                if (blogVote != null)// Update AppUserBlog
+                {
+                    blogVote.VoteType = voteDto.VoteType;
+                    _dataDbContext.AppUserBlogs.Update(blogVote);
+                    await _dataDbContext.SaveChangesAsync();
+                }
+                else // Create new AppUserBlog
+                {
+                    AppUserBlog vote = new() { AppUserId = voteDto.AppUserId, BlogId = voteDto.BlogId, VoteType = voteDto.VoteType };
+                    await _dataDbContext.AppUserBlogs.AddAsync(vote);
+                    await _dataDbContext.SaveChangesAsync();
+                }
+                return Redirect(voteDto.ReturnUrl);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }

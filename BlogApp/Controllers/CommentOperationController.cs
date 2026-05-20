@@ -34,7 +34,7 @@ namespace BlogApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> VoteAndReload([FromForm] VoteDto voteDto)
+        public async Task<IActionResult> VoteAndReload([FromForm] CommentVoteDto voteDto)
         {
             IdentityAppUser? identityAppUser = HttpContext.GetIdentityAppUser();
             if (identityAppUser == null) return RedirectToPage("/Account/AccessDenied");
@@ -93,16 +93,60 @@ namespace BlogApp.Controllers
 
             if (appUser != null && blog != null)
             {
-                Comment comment = new Comment()
+                AppUserBlog? appUserBlog = await _dataDbContext.AppUserBlogs.FirstOrDefaultAsync(aub => aub.AppUserId == appUser.AppUserId && aub.BlogId == blog.BlogId);
+                if (appUserBlog != null)
                 {
-                    AppUserId = appUser.AppUserId,
-                    BlogId = blog.BlogId,
-                    StringContent = commentDto.Text
-                };
+                    if (appUserBlog.CommentId != null)
+                    {
+                        // user already have comment on this blog, so return:
+                        return Redirect(commentDto.ReturnUrl);
+                    }
+                    else
+                    {
+                        Comment comment = new Comment()
+                        {
+                            AppUserId = appUser.AppUserId,
+                            BlogId = blog.BlogId,
+                            StringContent = commentDto.Text
+                        };
 
-                _dataDbContext.Comments.Add(comment);
-                await _dataDbContext.SaveChangesAsync();
-                return Redirect(commentDto.ReturnUrl);
+                        var commentEntry = _dataDbContext.Comments.Add(comment);
+                        await _dataDbContext.SaveChangesAsync();
+
+                        appUserBlog.CommentId = commentEntry.Entity.CommentId;
+                        _dataDbContext.AppUserBlogs.Update(appUserBlog);
+                        await _dataDbContext.SaveChangesAsync();
+
+                        return Redirect(commentDto.ReturnUrl);
+                    }
+                }
+                else
+                {
+                    // create new AppUserBlog:
+                    appUserBlog = new AppUserBlog()
+                    {
+                        AppUserId = appUser.AppUserId,
+                        BlogId = blog.BlogId,
+                        VoteType = Models.Enums.VoteType.Dislike,
+                    };
+                    await _dataDbContext.AppUserBlogs.AddAsync(appUserBlog);
+
+                    Comment comment = new Comment()
+                    {
+                        AppUserId = appUser.AppUserId,
+                        BlogId = blog.BlogId,
+                        StringContent = commentDto.Text
+                    };
+
+                    var commentEntry = _dataDbContext.Comments.Add(comment);
+                    await _dataDbContext.SaveChangesAsync();
+
+                    appUserBlog.CommentId = commentEntry.Entity.CommentId;
+                    _dataDbContext.AppUserBlogs.Update(appUserBlog);
+                    await _dataDbContext.SaveChangesAsync();
+
+                    return Redirect(commentDto.ReturnUrl);
+                }
             }
             else
             {

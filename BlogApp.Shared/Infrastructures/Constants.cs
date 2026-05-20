@@ -48,6 +48,9 @@
 
             public const string SmallArrowUpIcon = "images/static/small-arrow-up.png";
             public const string SmallArrowDownIcon = "images/static/small-arrow-down.png";
+
+            public const string HeartIcon = "images/static/icon-heart.png";
+            public const string UnHeartIcon = "images/static/icon-unheart.png";
         }
     }
 }

@@ -250,5 +250,17 @@
   {
     "ENG": "Save",
     "FA": "ذخیره"
+  },
+  {
+    "ENG": "Do you like this blog?",
+    "FA": "این بلاگ رو دوست داری؟"
+  },
+  {
+    "ENG": "login to vote",
+    "FA": "وارد شو تا امتیاز بدی"
+  },
+  {
+    "ENG": "Dear user, you have already a comment on this blog. You cant add new comment anymore.",
+    "FA": "کاربر عزیز، شما برای این بلاگ یک کامنت دارید و دیگر نمیتوانید کامنت جدیدی وارد کنید."
   }
 ]

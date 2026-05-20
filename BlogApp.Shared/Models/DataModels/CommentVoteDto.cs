@@ -2,7 +2,7 @@
 
 namespace BlogApp.Models.DataModels
 {
-    public class VoteDto
+    public class CommentVoteDto
     {
         public long CommentId { get; set; }
         public long AppUserId { get; set; }

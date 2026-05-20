@@ -29,15 +29,20 @@ namespace BlogApp.Models
         /// <summary>
         /// Navigation property to Comments
         /// </summary>
-        public virtual IEnumerable<Comment>? Comments { get; set; } 
+        public virtual IEnumerable<Comment>? Comments { get; set; }
 
         /// <summary>
-        /// Navigation property to CommentVotes
+        /// Navigation property to CommentVotes (join table)
         /// </summary>
         public virtual IEnumerable<AppUserCommnet>? AppUserCommnets { get; set; }
 
         /// <summary>
-        /// Navigation property to AppUserOptional
+        /// Navigation property to Blog vote and comment (join table)
+        /// </summary>
+        public virtual IEnumerable<AppUserBlog>? AppUserBlogs { get; set; }
+
+        /// <summary>
+        /// Navigation property to AppUserOptional (one to one relationship)
         /// </summary>
         public virtual AppUserOptional? AppUserOptional { get; set; }
 

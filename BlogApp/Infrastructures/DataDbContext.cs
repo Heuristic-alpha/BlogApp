@@ -15,8 +15,9 @@ namespace BlogApp.Infrastructures
 
         // Join Sets:
         public DbSet<AppUserCommnet> AppUserComments => Set<AppUserCommnet>();
+        public DbSet<AppUserBlog> AppUserBlogs => Set<AppUserBlog>();
         public DbSet<BlogCategory> BlogCategories => Set<BlogCategory>();
-
+       
         // Additional Sets:
         public DbSet<AppUserOptional> AppUserOptionals => Set<AppUserOptional>();
     }

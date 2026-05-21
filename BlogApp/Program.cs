@@ -122,13 +122,13 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
-
-app.UseSession();
 app.UseStaticFiles();
-app.UseAntiforgery();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseIdentityAppUser();
+app.UseAntiforgery();
+app.UseSession();
+app.UseIdentityAppUser(); // Register 'AppUser' and 'IdentityAppUser' to HttpContext object
 app.MapControllers();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
@@ -137,6 +137,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "Blog App"); });
+
+    app.MapGet("/hi", async (HttpContext context) =>
+    {
+        await context.Response.WriteAsJsonAsync($"Hello {(context.GetAppUser() != null ? context.GetAppUser()!.DisplayName : "anonimos")}");
+    });
 }
 app.UseBlazorFrameworkFiles("/webassembly");
 app.MapFallbackToFile("/webassembly/{*path:nonfile}", "/webassembly/index.html");

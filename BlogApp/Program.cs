@@ -1,14 +1,12 @@
-﻿using BlogApp.Infrastructures.Localization;
-using BlogApp.Models;
+﻿using BlogApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 #region builder configure region
@@ -38,7 +36,7 @@ builder.Services.Configure<IdentityOptions>(opts =>
 TokenValidationParameters JWTTokenValidationParameters = new TokenValidationParameters()
 {
     ValidateIssuerSigningKey = true,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["jwtSecret"]!)),
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration[Constants.JWTAuthentication.JWTSecretName]!)),
     ValidateAudience = false,
     ValidateIssuer = false
 };
@@ -92,7 +90,6 @@ builder.Services.AddAuthentication(opts =>
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddSwaggerGen(c =>
@@ -102,6 +99,7 @@ if (builder.Environment.IsDevelopment())
 }
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UrlLocator>();
+builder.Services.AddScoped<AppUserManager>();
 builder.Services.AddScoped<UserProfilePictureService>();
 builder.Services.AddSingleton<LocalManager>();
 builder.Services.AddDistributedMemoryCache();
@@ -109,7 +107,29 @@ builder.Services.AddSession(opts =>
 {
     opts.Cookie.IsEssential = true;
 });
+builder.Services.AddRateLimiter(opts =>
+{
+    opts.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        string key = httpContext.Request.Headers["X-API-Key"].FirstOrDefault()
+                     ?? httpContext.Connection.RemoteIpAddress?.ToString()
+                     ?? "anonymous";
+        return RateLimitPartition.GetFixedWindowLimiter(key, partition =>
+        new FixedWindowRateLimiterOptions()
+        {
+            PermitLimit = 45,
+            Window = TimeSpan.FromSeconds(60),
+        });
+    });
 
+    opts.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsync($"To many requests. Try again later.\n" +
+                                                      $"{string.Join("\n", context.Lease.GetAllMetadata()
+                                                                                       .Select(kvp => $"{kvp.Key} = {kvp.Value?.ToString()}"))}");
+    };
+});
 #endregion
 var app = builder.Build();
 #region app configure region
@@ -123,6 +143,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 app.UseStaticFiles();
+app.UseRateLimiter();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -132,7 +153,6 @@ app.UseIdentityAppUser(); // Register 'AppUser' and 'IdentityAppUser' to HttpCon
 app.MapControllers();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
-app.MapBlazorHub();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -140,15 +160,15 @@ if (app.Environment.IsDevelopment())
 
     app.MapGet("/hi", async (HttpContext context) =>
     {
-        await context.Response.WriteAsJsonAsync($"Hello {(context.GetAppUser() != null ? context.GetAppUser()!.DisplayName : "anonimos")}");
+        await context.Response.WriteAsJsonAsync($"Hello {(context.GetAppUser() != null ? context.GetAppUser()!.DisplayName : "anonymous")}");
     });
 }
 app.UseBlazorFrameworkFiles("/webassembly");
 app.MapFallbackToFile("/webassembly/{*path:nonfile}", "/webassembly/index.html");
 
-await SeedDataDb.SeedingDataDb(app);
+await SeedDbContext.SeedingDataDb(app);
 LocalManager localManager = app.Services.GetRequiredService<LocalManager>();
-await localManager.LoadAsync();
+await localManager.LoadFromServerFilePathAsync();
 
 #endregion
 app.Run();

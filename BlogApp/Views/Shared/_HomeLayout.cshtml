@@ -37,7 +37,7 @@
                 <form asp-controller="Home" asp-action="SetLanguage" method="get" class="btn btn-outline-light">
                     <span class="m-1"><span class="fa fa-globe-americas"></span></span>
                     <input type="text" name="returnURL" value="@Context.Request.GetPathWithQuery()" hidden />
-                    <select name="language" onchange="this.form.submit()">
+                    <select class="form-select-sm" name="language" onchange="this.form.submit()">
                         @if (language == Language.ENG) { <option selected value="ENG">English</option>}
                         else {<option value="ENG">English</option>}
 

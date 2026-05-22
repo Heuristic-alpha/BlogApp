@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.IO;
 using System.Text.Json;
 
 namespace BlogApp.Infrastructures.Localization
@@ -9,7 +8,7 @@ namespace BlogApp.Infrastructures.Localization
         public const string FileName = "Localization.json";
         public const string LocalizationFileURL = $"{Constants.HostAddress}/{FileName}";
 
-        private string _serverLocalizationFilePath;
+        public string ServerLocalizationFilePath { get; init; }
         private Dictionary<string, Payload> _dictionary;
         private JsonSerializerOptions _jsonSerializerOptions;
         private object _dictionaryLock;
@@ -17,7 +16,7 @@ namespace BlogApp.Infrastructures.Localization
         // Base Ctor
         public LocalManager(ILogger<LocalManager> logger)
         {
-            _serverLocalizationFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", FileName);
+            ServerLocalizationFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", FileName);
             _dictionary = new Dictionary<string, Payload>();
             _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerOptions.Default)
             {
@@ -25,17 +24,17 @@ namespace BlogApp.Infrastructures.Localization
             };
             _dictionaryLock = new object();
 
-            logger.LogInformation($"ServerLocalizationFile Path is at [{_serverLocalizationFilePath}]");
+            logger.LogInformation($"ServerLocalizationFile path: {ServerLocalizationFilePath}");
         }
 
-        public async Task SaveAsync()
+        public async Task SaveToServerFilePathAsync()
         {
-            await SaveToFileAsync(_serverLocalizationFilePath);
+            await SaveToFileAsync(ServerLocalizationFilePath);
         }
 
-        public async Task LoadAsync()
+        public async Task LoadFromServerFilePathAsync()
         {
-            await LoadFromFileAsync(_serverLocalizationFilePath);
+            await LoadFromFileAsync(ServerLocalizationFilePath);
         }
 
         public async Task SaveToFileAsync(string path)

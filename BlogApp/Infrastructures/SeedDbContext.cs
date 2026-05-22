@@ -1,20 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using BlogApp.Models;
+﻿using BlogApp.Models;
 using BlogApp.Models.JoinModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace BlogApp.Infrastructures
 {
-    public static class SeedDataDb
+    public static class SeedDbContext
     {
         public static async Task SeedingDataDb(WebApplication app)
         {
             var serviceProvider = app.Services.CreateScope().ServiceProvider;
             DataDbContext dataDb = serviceProvider.GetRequiredService<DataDbContext>();
             IdentityContext identityDb = serviceProvider.GetRequiredService<IdentityContext>();
-            UserManager<IdentityAppUser> userManager = serviceProvider.GetRequiredService<UserManager<IdentityAppUser>>();
             RoleManager<IdentityRole> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             UserProfilePictureService userProfilePictureService = serviceProvider.GetRequiredService<UserProfilePictureService>();
+            AppUserManager appUserManager = serviceProvider.GetRequiredService<AppUserManager>();
 
             ILogger<DataBaseSeedler> logger = app.Services.GetRequiredService<ILogger<DataBaseSeedler>>();
 
@@ -33,11 +32,11 @@ namespace BlogApp.Infrastructures
             }
 
             if (!dataDb.AppUsers.Any())
-            {
-                await AppUserHelper.TryCreateUserAsync(userManager, dataDb, "manager", "manager@gmail.com", "123456789", isMale: true, [Constants.Roles.Manager, Constants.Roles.Admins, Constants.Roles.Members]);
-                await AppUserHelper.TryCreateUserAsync(userManager, dataDb, "admin", "admin@gmail.com", "123456789", isMale: true, [Constants.Roles.Admins, Constants.Roles.Members]);
-                await AppUserHelper.TryCreateUserAsync(userManager, dataDb, "bob", "bob@gmail.com", "123456", isMale: true, [Constants.Roles.Members]);
-                await AppUserHelper.TryCreateUserAsync(userManager, dataDb, "alice", "alice0@gmail.com", "123456", isMale: false, [Constants.Roles.Members]);
+            {                
+                await appUserManager.TryCreateUserAsync("manager", "manager@gmail.com", "123456789", isMale: true, [Constants.Roles.Manager, Constants.Roles.Admins, Constants.Roles.Members]);
+                await appUserManager.TryCreateUserAsync("admin", "admin@gmail.com", "123456789", isMale: true, [Constants.Roles.Admins, Constants.Roles.Members]);
+                await appUserManager.TryCreateUserAsync("bob", "bob@gmail.com", "123456", isMale: true, [Constants.Roles.Members]);
+                await appUserManager.TryCreateUserAsync("alice", "alice0@gmail.com", "123456", isMale: false, [Constants.Roles.Members]);
             }
 
             Category[] categories = Array.Empty<Category>();
@@ -64,7 +63,7 @@ namespace BlogApp.Infrastructures
                 Blog blog6 = new Blog() { Title = "Life", BlogContent = "I want to buy a nice car (or nice super car).", AppUserId = 3 };
                 Blog blog7 = new Blog() { Title = "Life", BlogContent = "I want to make my parrents happy.", AppUserId = 4 };
                 Blog blog8 = new Blog() { Title = "Life", BlogContent = "I want to find nice GF and even possible marry her.", AppUserId = 4 };
-                Blog blog9 = new Blog() { Title = "Site", BlogContent = "I have built this site ;)", AppUserId = 1 , IsConfirmed = true, IsPublic = true};
+                Blog blog9 = new Blog() { Title = "Site", BlogContent = "I have built this site ;)", AppUserId = 1, IsConfirmed = true, IsPublic = true };
 
                 blogs = [blog1, blog2, blog3, blog4, blog5, blog6, blog7, blog8, blog9];
 
@@ -88,7 +87,7 @@ namespace BlogApp.Infrastructures
             BlogCategory[] blogCategories = Array.Empty<BlogCategory>();
             if (!dataDb.BlogCategories.Any())
             {
-                BlogCategory bc1 = new BlogCategory() { BlogId = 1 , CategoryId = 3 };
+                BlogCategory bc1 = new BlogCategory() { BlogId = 1, CategoryId = 3 };
                 BlogCategory bc2 = new BlogCategory() { BlogId = 1, CategoryId = 2 };
                 BlogCategory bc3 = new BlogCategory() { BlogId = 1, CategoryId = 4 };
 

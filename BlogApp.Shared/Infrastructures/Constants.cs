@@ -9,6 +9,12 @@
             public const string Language = "Language";
         }
 
+        public struct RateLimiterNames
+        {
+            public const string PublicLimit = "PublicLimit";
+            public const string AdminLimit = "AdminLimit";
+        }
+
         public struct JWTAuthentication
         {
             public const string JWTAuthToken = "authToken";

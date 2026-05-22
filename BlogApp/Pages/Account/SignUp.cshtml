@@ -45,9 +45,9 @@
                 </div>
                 <div class="col form-control m-1">
                     <label>@LM.GetLocalOrKey("Gender", lang)</label>
-                    <select class="form-select" asp-for="@Model.IsMale" >
-                        <option class="col-form-label m-3" value="true">@LM.GetLocalOrKey("Male", lang)<span><img class="m-3" src="@Model.GetIconPath(true)" alt="Icon" width="16" height="16" /></span> </option>
-                        <option class="col-form-label m-3" value="false">@LM.GetLocalOrKey("Female", lang)<span><img class="m-3" src="@Model.GetIconPath(false)" alt="Icon" width="16" height="16" /></span> </option>
+                    <select class="form-select-sm" asp-for="@Model.IsMale" >
+                        <option class="m-3" value="true">@LM.GetLocalOrKey("Male", lang)<img class="m-3" src="@Model.GetIconPath(true)" alt="Icon" width="16" height="16" /></option>
+                        <option class="m-3" value="false">@LM.GetLocalOrKey("Female", lang)<img class="m-3" src="@Model.GetIconPath(false)" alt="Icon" width="16" height="16" /></option>
                     </select>
                 </div>
             </form>
@@ -58,4 +58,4 @@
             <button type="submit" class="btn  btn-outline-success" form="frm">@LM.GetLocalOrKey("Make", lang)</button>
         </div>
     </div>
-</div>
+</div>                       

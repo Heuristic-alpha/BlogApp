@@ -14,14 +14,14 @@ namespace BlogApp.Controllers
         private DataDbContext _dataDbContext;
         private UserManager<IdentityAppUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
-        private UserProfilePictureService _userProfilePictureService;
+        private AppUserManager _appUserManager;
 
-        public AppUserController(DataDbContext dataDbContext, UserManager<IdentityAppUser> userManager, RoleManager<IdentityRole> roleManager, UserProfilePictureService userProfilePictureService)
+        public AppUserController(DataDbContext dataDbContext, UserManager<IdentityAppUser> userManager, RoleManager<IdentityRole> roleManager, AppUserManager appUserManager)
         {
             _dataDbContext = dataDbContext;
             _userManager = userManager;
             _roleManager = roleManager;
-            _userProfilePictureService = userProfilePictureService;
+            _appUserManager = appUserManager;
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace BlogApp.Controllers
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> Delete(long id)
         {
-            if (await AppUserHelper.TryDeleteUserAsync(_userManager, _dataDbContext,_userProfilePictureService, id))
+            if (await _appUserManager.TryDeleteUserAsync(id))
             {
                 return Ok();
             }
@@ -183,7 +183,7 @@ namespace BlogApp.Controllers
         {
             if (userDetails != null)
             {
-                (bool isSuccess, List<string> errors) = await AppUserHelper.TryCreateUserAsync(_userManager, _dataDbContext, userDetails);
+                (bool isSuccess, List<string> errors) = await _appUserManager.TryCreateUserAsync(userDetails);
                 if (isSuccess)
                 {
                     return Ok();
@@ -208,7 +208,7 @@ namespace BlogApp.Controllers
         {
             if (userDetails != null)
             {
-                (bool isSuccess, List<string> errors) = await AppUserHelper.TryUpdateUserAsync(_userManager, _dataDbContext, _userProfilePictureService, userDetails);
+                (bool isSuccess, List<string> errors) = await _appUserManager.TryUpdateUserAsync(userDetails);
                 if (isSuccess)
                 {
                     return Ok();

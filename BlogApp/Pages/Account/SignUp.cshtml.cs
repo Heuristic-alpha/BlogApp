@@ -1,20 +1,15 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using BlogApp.Infrastructures;
-using BlogApp.Models;
 
 namespace BlogApp.Pages.Account
 {
     public class SignUpModel : PageModel
     {
-        public UserManager<IdentityAppUser> UserManager { get; set; }
-        public DataDbContext DbContext { get; set; }
+        private AppUserManager _appUserManager;
 
-        public SignUpModel(UserManager<IdentityAppUser> userManager, DataDbContext dbContext)
+        public SignUpModel(AppUserManager appUserManager)
         {
-            UserManager = userManager;
-            DbContext = dbContext;
+            _appUserManager = appUserManager;
         }
 
         [BindProperty, Required]
@@ -46,7 +41,7 @@ namespace BlogApp.Pages.Account
                     ModelState.AddModelError(string.Empty, "Password and ConfirmPassword should be equal");
                     return Page();
                 }
-                (bool isSuccess, List<string> errors) result = await AppUserHelper.TryCreateUserAsync(UserManager, DbContext, UserName, Email, Password, IsMale, ["Members"]);
+                (bool isSuccess, List<string> errors) result = await _appUserManager.TryCreateUserAsync(UserName, Email, Password, IsMale, ["Members"]);
                 if (result.isSuccess)
                 {
                     return RedirectToPage("CreatedPage");
@@ -65,8 +60,8 @@ namespace BlogApp.Pages.Account
 
         public string GetIconPath(bool isMale)
         {
-            if (isMale) return Url.Content("images/static/icon-male.svg");
-            else return Url.Content("images/static/icon-female.svg");
+            if (isMale) return Url.Content(Constants.StaticImagesURL.MaleUserProfileIcon);
+            else return Url.Content(Constants.StaticImagesURL.FemaleUserProfileIcon);
         }
     }
 }

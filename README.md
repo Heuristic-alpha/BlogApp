@@ -179,17 +179,7 @@ The application supports multiple authentication methods:
 ### Basic Authentication Flow
 
 ```bash
-# 1. Register a new user
-POST /api/auth/register
-Content-Type: application/json
-
-{
-  "username": "john_doe",
-  "email": "john@example.com",
-  "password": "securepass123"
-}
-
-# 2. Login
+# 1. Login
 POST /api/auth/login
 Content-Type: application/json
 
@@ -203,7 +193,7 @@ Content-Type: application/json
   "token": "eyJhbGciOiJIUzI1NiIs..."
 }
 
-# 3. Use token in subsequent requests
+# 2. Use token in subsequent requests
 GET /api/blogs
 Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 ```
@@ -356,13 +346,13 @@ For issues, feature requests, or questions:
 ## 🔄 Roadmap
 
 Future enhancements planned:
-- [ ] Blog search and filtering
-- [ ] Comment system
-- [ ] Like/reaction system
+- [x] Blog search and filtering
+- [x] Comment system
+- [x] Like/reaction system
 - [ ] Social media integration
 - [ ] Analytics dashboard
 - [ ] SEO optimization
-- [ ] Multi-language support
+- [x] Multi-language support
 - [ ] Mobile app
 
 ---

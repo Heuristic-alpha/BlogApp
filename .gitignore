@@ -402,3 +402,6 @@ FodyWeavers.xsd
 
 # Blog App directories
 userPictures/
+
+# LibMan - Client-side libraries managed by LibMan
+wwwroot/lib/

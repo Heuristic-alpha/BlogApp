@@ -404,4 +404,5 @@ FodyWeavers.xsd
 userPictures/
 
 # LibMan - Client-side libraries managed by LibMan
-wwwroot/lib/
+BlogApp/wwwroot/lib/
+BlazorAdminPanel/wwwroot/lib/

@@ -19,7 +19,6 @@ BlogApp is an enterprise-grade blogging platform that combines multiple Microsof
 ### 📱 Multi-Frontend Support
 - **ASP.NET Core MVC** - Traditional server-side rendered application
 - **Razor Pages** - Lightweight, page-focused approach for rapid development
-- **Blazor Server** - Real-time, interactive components with server-side processing
 - **Blazor WebAssembly** - Client-side SPA with full interactive capabilities
 
 ### 🔐 Security & Authentication
@@ -342,7 +341,7 @@ Contributions are welcome! Please follow these guidelines:
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-Copyright © 2026 HS797979
+Copyright © 2026 Heuristic-alpha
 
 ---
 

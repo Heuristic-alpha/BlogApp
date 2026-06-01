@@ -118,6 +118,7 @@ BlogApp/
 2. **Restore dependencies**
    ```bash
    dotnet restore
+   libman restore
    ```
 
 3. **Configure connection strings**
@@ -145,9 +146,9 @@ BlogApp/
    ```
 
 6. **Access the application**
-   - Main application: `https://localhost:5001`
-   - Swagger API docs (dev only): `https://localhost:5001/swagger`
-   - Blazor WebAssembly admin: `https://localhost:5001/webassembly`
+   - Main application: `https://localhost:5000`
+   - Swagger API docs (dev only): `https://localhost:5000/swagger`
+   - Blazor WebAssembly admin: `https://localhost:5000/webassembly`
 
 ---
 

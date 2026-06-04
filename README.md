@@ -1,4 +1,4 @@
-# BlogApp 📝
+# 📝 BlogApp
 
 A complete, full-featured web server for creating, editing, sharing, and managing personal blogs using **ASP.NET Core** with a modern, multi-layered architecture.
 
@@ -11,6 +11,23 @@ A complete, full-featured web server for creating, editing, sharing, and managin
 ## 🎯 Overview
 
 BlogApp is an enterprise-grade blogging platform that combines multiple Microsoft web technologies to provide a robust, scalable, and user-friendly blogging solution. Whether you're a developer looking for a blogging backend or an end-user wanting to start your blog journey, BlogApp provides everything you need.
+
+
+### 🖼 Screenshots
+
+[Screenshot 1](./ReadMeAssets/Screenshot1.png)
+
+[Screenshot 2](./ReadMeAssets/Screenshot2.png)
+
+[Screenshot 3](./ReadMeAssets/Screenshot3.png)
+
+[Screenshot 4](./ReadMeAssets/Screenshot4.png)
+
+[Screenshot 5](./ReadMeAssets/Screenshot5.png)
+
+[Screenshot 6](./ReadMeAssets/Screenshot6.png)
+
+[Screenshot 7](./ReadMeAssets/Screenshot7.png)
 
 ---
 

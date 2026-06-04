@@ -15,19 +15,19 @@ BlogApp is an enterprise-grade blogging platform that combines multiple Microsof
 
 ### 🖼 Screenshots
 
-[Screenshot 1](./ReadMeAssets/Screenshot1.png)
+![Screenshot 1](./ReadMeAssets/Screenshot1.png)
 
-[Screenshot 2](./ReadMeAssets/Screenshot2.png)
+![Screenshot 2](./ReadMeAssets/Screenshot2.png)
 
-[Screenshot 3](./ReadMeAssets/Screenshot3.png)
+![Screenshot 3](./ReadMeAssets/Screenshot3.png)
 
-[Screenshot 4](./ReadMeAssets/Screenshot4.png)
+![Screenshot 4](./ReadMeAssets/Screenshot4.png)
 
-[Screenshot 5](./ReadMeAssets/Screenshot5.png)
+![Screenshot 5](./ReadMeAssets/Screenshot5.png)
 
-[Screenshot 6](./ReadMeAssets/Screenshot6.png)
+![Screenshot 6](./ReadMeAssets/Screenshot6.png)
 
-[Screenshot 7](./ReadMeAssets/Screenshot7.png)
+![Screenshot 7](./ReadMeAssets/Screenshot7.png)
 
 ---
 

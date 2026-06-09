@@ -3,10 +3,12 @@ using BlogApp.Models.DataModels;
 using BlogApp.Models.SearchModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Text;
 
 namespace BlogApp.Controllers
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.AdminFixLimit)]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class AppUserController : ControllerBase

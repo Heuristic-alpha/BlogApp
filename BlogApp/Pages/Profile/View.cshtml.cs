@@ -1,8 +1,10 @@
 using BlogApp.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BlogApp.Pages.Profile
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.PublicFixLimit)]
     public class ViewModel : PageModel
     {
         private DataDbContext _dataDbContext;
@@ -21,7 +23,7 @@ namespace BlogApp.Pages.Profile
         [BindProperty]
         public string Description { get; set; } = string.Empty;
 
-        public AppUser AppUser { get; set; }
+        public AppUser? AppUser { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {

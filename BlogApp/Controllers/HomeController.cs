@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace BlogApp.Controllers
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.PublicFixLimit)]
     public class HomeController : Controller
     {
         private DataDbContext _dataDbContext;

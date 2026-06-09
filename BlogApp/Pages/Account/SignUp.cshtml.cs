@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlogApp.Pages.Account
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.PublicFixLimit)]
     public class SignUpModel : PageModel
     {
         private AppUserManager _appUserManager;

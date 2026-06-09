@@ -2,9 +2,11 @@ using BlogApp.Infrastructures;
 using BlogApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BlogApp.Pages
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.PublicFixLimit)]
     [Authorize(Roles = Constants.Roles.Members)]
     public class DashboardModel : PageModel
     {

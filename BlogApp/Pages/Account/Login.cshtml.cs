@@ -1,10 +1,12 @@
+using BlogApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using System.ComponentModel.DataAnnotations;
-using BlogApp.Models;
 
 namespace BlogApp.Pages.Account
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.PublicFixLimit)]
     public class LoginModel : PageModel
     {
         public LoginModel(SignInManager<IdentityAppUser> signInManager)

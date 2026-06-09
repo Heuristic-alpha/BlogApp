@@ -1,10 +1,12 @@
 using BlogApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlogApp.Pages.Profile
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.PublicFixLimit)]
     [Authorize(Roles = $"{Constants.Roles.Members}")]
     public class EditModel : PageModel
     {
@@ -47,7 +49,7 @@ namespace BlogApp.Pages.Profile
         [BindProperty]
         public bool ShouldDeleteProfilePicture { get; set; }
 
-        public string ProfilePictureUrl { get; set; }
+        public string ProfilePictureUrl { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync()
         {

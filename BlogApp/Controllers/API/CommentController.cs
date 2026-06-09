@@ -2,9 +2,11 @@
 using BlogApp.Models.JoinModels;
 using BlogApp.Models.SearchModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BlogApp.Controllers
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.AdminFixLimit)]
     [Authorize(Roles = Constants.Roles.Admins, AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme}")]
     [Route("api/[controller]/[action]")]
     [ApiController]

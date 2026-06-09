@@ -1,7 +1,8 @@
-﻿using BlogApp.Models.DataModels;
+﻿using BlogApp.Infrastructures;
 using BlogApp.Models;
-using BlogApp.Infrastructures;
+using BlogApp.Models.DataModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,6 +10,7 @@ using System.Text;
 
 namespace BlogApp.Controllers
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.AdminFixLimit)]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class AuthController : ControllerBase

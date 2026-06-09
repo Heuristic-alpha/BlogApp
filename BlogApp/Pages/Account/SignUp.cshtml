@@ -36,12 +36,12 @@
                 <div class="col form-control m-1">
                     <label>@LM.GetLocalOrKey("Password", lang)</label>
                     <span class="text-danger" asp-validation-for="@Model.Password"></span>
-                    <input class="input-group-text form-text" asp-for="@Model.Password" />
+                    <input class="input-group-text form-text" asp-for="@Model.Password" type="password" />
                 </div>
                 <div class="col form-control m-1">
                     <label>@LM.GetLocalOrKey("Confirm Password", lang)</label>
                     <span class="text-danger" asp-validation-for="@Model.ConfirmPassword"></span>
-                    <input class="input-group-text form-text" asp-for="@Model.ConfirmPassword" />
+                    <input class="input-group-text form-text" asp-for="@Model.ConfirmPassword" type="password" />
                 </div>
                 <div class="col form-control m-1">
                     <label>@LM.GetLocalOrKey("Gender", lang)</label>

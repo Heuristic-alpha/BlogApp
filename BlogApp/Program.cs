@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
@@ -109,6 +110,22 @@ builder.Services.AddSession(opts =>
 });
 builder.Services.AddRateLimiter(opts =>
 {
+    opts.AddFixedWindowLimiter(Constants.RateLimiterNames.PublicFixLimit, config =>
+    {
+        config.PermitLimit = 45;
+        config.AutoReplenishment = true;
+        config.QueueLimit = 0;
+        config.Window = TimeSpan.FromMinutes(1);
+    });
+
+    opts.AddFixedWindowLimiter(Constants.RateLimiterNames.AdminFixLimit, config =>
+    {
+        config.PermitLimit = 100;
+        config.AutoReplenishment = true;
+        config.QueueLimit = 0;
+        config.Window = TimeSpan.FromMinutes(1);
+    });
+
     opts.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
     {
         string key = httpContext.Request.Headers["X-API-Key"].FirstOrDefault()
@@ -117,7 +134,7 @@ builder.Services.AddRateLimiter(opts =>
         return RateLimitPartition.GetFixedWindowLimiter(key, partition =>
         new FixedWindowRateLimiterOptions()
         {
-            PermitLimit = 45,
+            PermitLimit = 30,
             Window = TimeSpan.FromSeconds(60),
         });
     });
@@ -143,10 +160,10 @@ else
     app.UseDeveloperExceptionPage();
 }
 app.UseStaticFiles();
-app.UseRateLimiter();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 app.UseAntiforgery();
 app.UseSession();
 app.UseIdentityAppUser(); // Register 'AppUser' and 'IdentityAppUser' to HttpContext object
@@ -167,8 +184,7 @@ app.UseBlazorFrameworkFiles("/webassembly");
 app.MapFallbackToFile("/webassembly/{*path:nonfile}", "/webassembly/index.html");
 
 await SeedDbContext.SeedingDataDb(app);
-LocalManager localManager = app.Services.GetRequiredService<LocalManager>();
-await localManager.LoadFromServerFilePathAsync();
+await app.Services.GetRequiredService<LocalManager>().LoadFromServerFilePathAsync();
 
 #endregion
 app.Run();

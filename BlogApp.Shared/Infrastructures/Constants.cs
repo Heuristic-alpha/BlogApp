@@ -11,8 +11,8 @@
 
         public struct RateLimiterNames
         {
-            public const string PublicLimit = "PublicLimit";
-            public const string AdminLimit = "AdminLimit";
+            public const string PublicFixLimit = "PublicLimit";
+            public const string AdminFixLimit = "AdminLimit";
         }
 
         public struct JWTAuthentication

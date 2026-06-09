@@ -1,9 +1,11 @@
 ﻿using BlogApp.Models;
 using BlogApp.Models.DataModels;
 using BlogApp.Models.JoinModels;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BlogApp.Controllers
 {
+    [EnableRateLimiting(Constants.RateLimiterNames.PublicFixLimit)]
     [Authorize(Roles = Constants.Roles.Members)]
     public class CommentOperationController : Controller
     {

@@ -25,9 +25,9 @@ namespace BlogApp.Controllers
             if (identityAppUser == null) return RedirectToPage("/Account/AccessDenied");
 
             IQueryable<Blog> allUserBlogs = _dataDbContext.Blogs.Include(b => b.AppUser)
-                                                            .Where(b => b.AppUserId == identityAppUser.AppUserId)
-                                                            .OrderByDescending(b => b.CreationDateTime)
-                                                            .AsNoTracking();
+                                                                .Where(b => b.AppUserId == identityAppUser.AppUserId)
+                                                                .OrderByDescending(b => b.CreationDateTime)
+                                                                .AsNoTracking();
 
             Blog[] thisPageBlogs = await allUserBlogs.Skip((page - 1) * size).Take(size).ToArrayAsync();
 
